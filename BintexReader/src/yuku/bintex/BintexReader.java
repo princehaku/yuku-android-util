@@ -49,7 +49,15 @@ public class BintexReader {
 		return is_.read();
 	}
 	
-	public void close() throws IOException {
-		is_.close();
+	public long skip(long n) throws IOException {
+		return is_.skip(n);
+	}
+	
+	public void close() {
+		try {
+			is_.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
