@@ -25,6 +25,7 @@ public class PengirimFidbek {
 	
 	private final Activity activity_;
 	private final SharedPreferences offlineBuffer_;
+	private TangkapSemuaEror tangkapSemuaEror_;
 	private ArrayList<String> xisi_;
 	private OnSuccessListener onSuccessListener_ = null;
 	private boolean lagiKirim_ = false;
@@ -36,6 +37,11 @@ public class PengirimFidbek {
 	
 	public void setOnSuccessListener(OnSuccessListener onSuccessListener) {
 		onSuccessListener_ = onSuccessListener;
+	}
+	
+	public void activateDefaultUncaughtExceptionHandler(String pesanEror) {
+		tangkapSemuaEror_ = new TangkapSemuaEror(this, activity_, pesanEror);
+		tangkapSemuaEror_.aktifkan();
 	}
 
 	public void tambah(String isi) {
@@ -87,6 +93,8 @@ public class PengirimFidbek {
 		public void run() {
 			boolean berhasil = false;
 
+			Log.d("KirimFidbek", "tred pengirim dimulai. thread id = " + getId());
+			
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost("http://www.kejut.com/prog/android/fidbek/kirim.php");
@@ -132,9 +140,9 @@ public class PengirimFidbek {
 					onSuccessListener_.onSuccess(baos.toByteArray());
 				}
 			} catch (IOException e) {
-				Log.w("PengirimFidbek", "waktu post", e);
+				Log.w("KirimFidbek", "waktu post", e);
 			}
-
+			
 			if (berhasil) {
 				synchronized (PengirimFidbek.this) {
 					xisi_.clear();
@@ -142,6 +150,8 @@ public class PengirimFidbek {
 
 				simpan();
 			}
+
+			Log.d("KirimFidbek", "tred pengirim selesai. berhasil = " + berhasil);
 
 			lagiKirim_ = false;
 		}
