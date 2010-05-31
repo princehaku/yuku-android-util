@@ -42,9 +42,9 @@ public class TangkapSemuaEror {
 			} catch (InterruptedException e1) {
 			}
 			
-			Log.w("KirimFidbek", "DUEH selesai. Exit 1");
+			Log.w("KirimFidbek", "DUEH selesai.");
 			
-			System.exit(1);
+			throw new RuntimeException("dari DUEH", e);
 		}
 	};
 
