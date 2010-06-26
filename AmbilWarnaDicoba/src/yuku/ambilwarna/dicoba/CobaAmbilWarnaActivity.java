@@ -7,6 +7,8 @@ import android.view.*;
 import android.widget.*;
 
 public class CobaAmbilWarnaActivity extends Activity {
+	int warna = 0xffffff00;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -16,10 +18,11 @@ public class CobaAmbilWarnaActivity extends Activity {
         findViewById(R.id.Button01).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				AmbilWarnaDialog dialog = new AmbilWarnaDialog(CobaAmbilWarnaActivity.this, 0xff9999ff, new AmbilWarnaDialog.OnAmbilWarnaListener() {
+				AmbilWarnaDialog dialog = new AmbilWarnaDialog(CobaAmbilWarnaActivity.this, warna, new AmbilWarnaDialog.OnAmbilWarnaListener() {
 					@Override
 					public void onOk(AmbilWarnaDialog dialog, int color) {
 						Toast.makeText(getApplicationContext(), "ok color=0x" + Integer.toHexString(color), Toast.LENGTH_SHORT).show();
+						warna = color;
 					}
 					
 					@Override

@@ -1,9 +1,9 @@
 package yuku.ambilwarna;
 
-import android.app.*;
+import android.app.AlertDialog;
 import android.content.*;
-import android.graphics.*;
-import android.util.*;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -37,8 +37,6 @@ public class AmbilWarnaDialog {
 		hue = tmp01[0];
 		sat = tmp01[1];
 		val = tmp01[2];
-		letakkanPanah();
-		letakkanKeker();
 		
 		satudp = context.getResources().getDimension(R.dimen.ambilwarna_satudp);
 		Log.d(TAG, "satudp = " + satudp);
@@ -50,7 +48,13 @@ public class AmbilWarnaDialog {
 		viewWarnaLama = view.findViewById(R.id.ambilwarna_warnaLama);
 		viewWarnaBaru = view.findViewById(R.id.ambilwarna_warnaBaru);
 		viewKeker = (ImageView) view.findViewById(R.id.ambilwarna_keker);
-		
+
+		letakkanPanah();
+		letakkanKeker();
+		viewKotak.setHue(hue);
+		viewWarnaLama.setBackgroundColor(color);
+		viewWarnaBaru.setBackgroundColor(color);
+
 		viewHue.setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
@@ -63,9 +67,11 @@ public class AmbilWarnaDialog {
 					if (y > 256.f) y = 256.f;
 					
 					hue = 360.f - 360.f / 256.f * y;
-					viewKotak.setHue(hue);
 					
+					// update view
+					viewKotak.setHue(hue);
 					letakkanPanah();
+					viewWarnaBaru.setBackgroundColor(getWarna());
 					
 					return true;
 				}
@@ -89,8 +95,9 @@ public class AmbilWarnaDialog {
 
 					sat = (1.f / 256.f * x);
 					val = 1.f - (1.f / 256.f * y);
+
+					// update view
 					letakkanKeker();
-					
 					viewWarnaBaru.setBackgroundColor(getWarna());
 					
 					return true;
@@ -98,7 +105,6 @@ public class AmbilWarnaDialog {
 				return false;
 			}
 		});
-		viewWarnaLama.setBackgroundColor(warnaLama);
 		
 		dialog = new AlertDialog.Builder(context)
 		.setView(view)
