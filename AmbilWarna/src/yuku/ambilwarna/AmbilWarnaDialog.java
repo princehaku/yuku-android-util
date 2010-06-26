@@ -30,7 +30,8 @@ public class AmbilWarnaDialog {
 	float hue;
 	float sat;
 	float val;
-	float ukuranUi = 240.f;
+	float ukuranUiDp = 240.f;
+	float ukuranUiPx; // diset di constructor
 	
 	public AmbilWarnaDialog(Context context, int color, OnAmbilWarnaListener listener) {
 		this.listener = listener;
@@ -42,7 +43,8 @@ public class AmbilWarnaDialog {
 		val = tmp01[2];
 		
 		satudp = context.getResources().getDimension(R.dimen.ambilwarna_satudp);
-		Log.d(TAG, "satudp = " + satudp);
+		ukuranUiPx = ukuranUiDp * satudp;
+		Log.d(TAG, "satudp = " + satudp + ", ukuranUiPx=" + ukuranUiPx);
 		
 		View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
 		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
@@ -65,11 +67,11 @@ public class AmbilWarnaDialog {
 						|| event.getAction() == MotionEvent.ACTION_DOWN
 						|| event.getAction() == MotionEvent.ACTION_UP) {
 					
-					float y = event.getY();
+					float y = event.getY(); // dalam px, bukan dp
 					if (y < 0.f) y = 0.f;
-					if (y > ukuranUi) y = ukuranUi - 0.001f;
+					if (y > ukuranUiPx) y = ukuranUiPx - 0.001f;
 					
-					hue = 360.f - 360.f / ukuranUi * y;
+					hue = 360.f - 360.f / ukuranUiPx * y;
 					if (hue == 360.f) hue = 0.f;
 					
 					warnaBaru = hitungWarna();
@@ -90,16 +92,16 @@ public class AmbilWarnaDialog {
 						|| event.getAction() == MotionEvent.ACTION_DOWN
 						|| event.getAction() == MotionEvent.ACTION_UP) {
 					
-					float x = event.getX();
-					float y = event.getY();
+					float x = event.getX(); // dalam px, bukan dp
+					float y = event.getY(); // dalam px, bukan dp
 					
 					if (x < 0.f) x = 0.f;
-					if (x > ukuranUi) x = ukuranUi;
+					if (x > ukuranUiPx) x = ukuranUiPx;
 					if (y < 0.f) y = 0.f;
-					if (y > ukuranUi) y = ukuranUi;
+					if (y > ukuranUiPx) y = ukuranUiPx;
 
-					sat = (1.f / ukuranUi * x);
-					val = 1.f - (1.f / ukuranUi * y);
+					sat = (1.f / ukuranUiPx * x);
+					val = 1.f - (1.f / ukuranUiPx * y);
 
 					warnaBaru = hitungWarna();
 					// update view
@@ -136,22 +138,22 @@ public class AmbilWarnaDialog {
 	
 	@SuppressWarnings("deprecation")
 	protected void letakkanPanah() {
-		float y = ukuranUi - (hue * ukuranUi / 360.f);
-		if (y == ukuranUi) y = 0.f;
+		float y = ukuranUiPx - (hue * ukuranUiPx / 360.f);
+		if (y == ukuranUiPx) y = 0.f;
 		
 		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) panah.getLayoutParams();
-		layoutParams.y = (int) (satudp * (y + 4));
+		layoutParams.y = (int) (y + 4);
 		panah.setLayoutParams(layoutParams);
 	}
 
 	@SuppressWarnings("deprecation")
 	protected void letakkanKeker() {
-		float x = sat * ukuranUi;
-		float y = (1.f - val) * ukuranUi;
+		float x = sat * ukuranUiPx;
+		float y = (1.f - val) * ukuranUiPx;
 		
 		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) viewKeker.getLayoutParams();
-		layoutParams.x = (int) (satudp * (x + 3));
-		layoutParams.y = (int) (satudp * (y + 3));
+		layoutParams.x = (int) (x + 3);
+		layoutParams.y = (int) (y + 3);
 		viewKeker.setLayoutParams(layoutParams);
 	}
 
