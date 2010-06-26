@@ -1,9 +1,9 @@
 package yuku.ambilwarna;
 
-import android.app.AlertDialog;
+import android.app.*;
 import android.content.*;
-import android.graphics.Color;
-import android.util.Log;
+import android.graphics.*;
+import android.util.*;
 import android.view.*;
 import android.widget.*;
 
@@ -26,13 +26,16 @@ public class AmbilWarnaDialog {
 	
 	float satudp;
 	int warnaLama;
+	int warnaBaru;
 	float hue;
 	float sat;
 	float val;
+	float ukuranUi = 240.f;
 	
 	public AmbilWarnaDialog(Context context, int color, OnAmbilWarnaListener listener) {
 		this.listener = listener;
 		this.warnaLama = color;
+		this.warnaBaru = color;
 		Color.colorToHSV(color, tmp01);
 		hue = tmp01[0];
 		sat = tmp01[1];
@@ -64,14 +67,16 @@ public class AmbilWarnaDialog {
 					
 					float y = event.getY();
 					if (y < 0.f) y = 0.f;
-					if (y > 256.f) y = 256.f;
+					if (y > ukuranUi) y = ukuranUi - 0.001f;
 					
-					hue = 360.f - 360.f / 256.f * y;
+					hue = 360.f - 360.f / ukuranUi * y;
+					if (hue == 360.f) hue = 0.f;
 					
+					warnaBaru = hitungWarna();
 					// update view
 					viewKotak.setHue(hue);
 					letakkanPanah();
-					viewWarnaBaru.setBackgroundColor(getWarna());
+					viewWarnaBaru.setBackgroundColor(warnaBaru);
 					
 					return true;
 				}
@@ -89,16 +94,17 @@ public class AmbilWarnaDialog {
 					float y = event.getY();
 					
 					if (x < 0.f) x = 0.f;
-					if (x > 256.f) x = 256.f;
+					if (x > ukuranUi) x = ukuranUi;
 					if (y < 0.f) y = 0.f;
-					if (y > 256.f) y = 256.f;
+					if (y > ukuranUi) y = ukuranUi;
 
-					sat = (1.f / 256.f * x);
-					val = 1.f - (1.f / 256.f * y);
+					sat = (1.f / ukuranUi * x);
+					val = 1.f - (1.f / ukuranUi * y);
 
+					warnaBaru = hitungWarna();
 					// update view
 					letakkanKeker();
-					viewWarnaBaru.setBackgroundColor(getWarna());
+					viewWarnaBaru.setBackgroundColor(warnaBaru);
 					
 					return true;
 				}
@@ -112,7 +118,7 @@ public class AmbilWarnaDialog {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, getWarna());
+					AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, warnaBaru);
 				}
 			}
 		})
@@ -130,26 +136,27 @@ public class AmbilWarnaDialog {
 	
 	@SuppressWarnings("deprecation")
 	protected void letakkanPanah() {
-		float y = 256.f - (hue * 256.f / 360.f);
+		float y = ukuranUi - (hue * ukuranUi / 360.f);
+		if (y == ukuranUi) y = 0.f;
 		
 		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) panah.getLayoutParams();
-		layoutParams.y = (int) (satudp * (y - 4));
+		layoutParams.y = (int) (satudp * (y + 4));
 		panah.setLayoutParams(layoutParams);
 	}
 
 	@SuppressWarnings("deprecation")
 	protected void letakkanKeker() {
-		float x = sat * 256.f;
-		float y = (1.f - val) * 256.f;
+		float x = sat * ukuranUi;
+		float y = (1.f - val) * ukuranUi;
 		
 		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) viewKeker.getLayoutParams();
-		layoutParams.x = (int) (satudp * (x - 5));
-		layoutParams.y = (int) (satudp * (y - 5));
+		layoutParams.x = (int) (satudp * (x + 3));
+		layoutParams.y = (int) (satudp * (y + 3));
 		viewKeker.setLayoutParams(layoutParams);
 	}
 
 	float[] tmp01 = new float[3];
-	private int getWarna() {
+	private int hitungWarna() {
 		tmp01[0] = hue;
 		tmp01[1] = sat;
 		tmp01[2] = val;
