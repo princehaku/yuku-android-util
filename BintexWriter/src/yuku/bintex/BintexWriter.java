@@ -18,7 +18,7 @@ public class BintexWriter {
 		int len = s.length();
 		
 		if (len > 255) {
-			throw new IllegalArgumentException("string must not more than 255 chars");
+			throw new IllegalArgumentException("string must not more than 255 chars. String is: " + s);
 		}
 		
 		os_.write(len);
@@ -67,6 +67,11 @@ public class BintexWriter {
 		pos += 1;
 	}
 	
+	public void writeFloat(float f) throws IOException {
+		int a = Float.floatToIntBits(f);
+		writeInt(a);
+	}
+	
 	public void close() throws IOException {
 		os_.close();
 	}
@@ -74,4 +79,5 @@ public class BintexWriter {
 	public int getPos() {
 		return pos;
 	}
+
 }

@@ -6,7 +6,8 @@ public class BintexReader {
 	private final InputStream is_;
 	
 	private int pos_ = 0;
-
+	private char[] buf = new char[1024]; // paling dikit 255 biar bisa shortstring
+	
 	public BintexReader(InputStream is) {
 		this.is_ = is;
 	}
@@ -17,27 +18,36 @@ public class BintexReader {
 		
 		if (len < 0) {
 			throw new EOFException();
+		} else if (len == 0) {
+			return "";
 		}
 		
-		char[] dat = new char[len];
-		
+		// max len = 255, maka buf pasti cukup
+		char[] _buf = this.buf;
 		for (int i = 0; i < len; i++) {
-			dat[i] = readChar();
+			_buf[i] = readCharTanpaNaikPos();
 		}
+		pos_ += len + len;
 		
-		return new String(dat);
+		return new String(_buf, 0, len);
 	}
 	
 	public String readLongString() throws IOException {
 		int len = readInt();
-		
-		char[] dat = new char[len];
-		
-		for (int i = 0; i < len; i++) {
-			dat[i] = readChar();
+		if (len == 0) {
+			return "";
 		}
 		
-		return new String(dat);
+		if (len > buf.length) {
+			this.buf = new char[len + 1024];
+		}
+		char[] _buf = this.buf;
+		for (int i = 0; i < len; i++) {
+			_buf[i] = readCharTanpaNaikPos();
+		}
+		pos_ += len + len;
+		
+		return new String(_buf, 0, len);
 	}
 	
 	public int readInt() throws IOException {
@@ -51,11 +61,20 @@ public class BintexReader {
 		pos_ += 2;
 		return res;
 	}
+	
+	private char readCharTanpaNaikPos() throws IOException {
+		return (char) ((is_.read() << 8) | (is_.read()));
+	}
 
 	public int readUint8() throws IOException {
 		int res = is_.read();
 		pos_++;
 		return res;
+	}
+	
+	public float readFloat() throws IOException {
+		int a = (is_.read() << 24) | (is_.read() << 16) | (is_.read() << 8) | (is_.read());
+		return Float.intBitsToFloat(a);
 	}
 	
 	public long skip(long n) throws IOException {
