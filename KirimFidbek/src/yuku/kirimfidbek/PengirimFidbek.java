@@ -1,37 +1,36 @@
 package yuku.kirimfidbek;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.client.*;
+import org.apache.http.client.entity.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.message.*;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
 
 public class PengirimFidbek {
 	public static interface OnSuccessListener {
 		void onSuccess(byte[] response);
 	}
 	
-	private final Activity activity_;
+	private final Context context_;
 	private final SharedPreferences offlineBuffer_;
 	private TangkapSemuaEror tangkapSemuaEror_;
 	private ArrayList<String> xisi_;
 	private OnSuccessListener onSuccessListener_ = null;
 	private boolean lagiKirim_ = false;
 	
-	public PengirimFidbek(Activity activity, SharedPreferences offlineBuffer) {
-		activity_ = activity;
+	public PengirimFidbek(Context context, SharedPreferences offlineBuffer) {
+		context_ = context;
 		offlineBuffer_ = offlineBuffer;
 	}
 	
@@ -39,8 +38,8 @@ public class PengirimFidbek {
 		onSuccessListener_ = onSuccessListener;
 	}
 	
-	public void activateDefaultUncaughtExceptionHandler(String pesanEror) {
-		tangkapSemuaEror_ = new TangkapSemuaEror(this, activity_, pesanEror);
+	public void activateDefaultUncaughtExceptionHandler() {
+		tangkapSemuaEror_ = new TangkapSemuaEror(this);
 		tangkapSemuaEror_.aktifkan();
 	}
 
@@ -99,11 +98,11 @@ public class PengirimFidbek {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost("http://www.kejut.com/prog/android/fidbek/kirim.php");
 				ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-				params.add(new BasicNameValuePair("package_name", activity_.getPackageName()));
+				params.add(new BasicNameValuePair("package_name", context_.getPackageName()));
 
 				int versionCode = 0;
 				try {
-					versionCode = activity_.getPackageManager().getPackageInfo(activity_.getPackageName(), 0).versionCode;
+					versionCode = context_.getPackageManager().getPackageInfo(context_.getPackageName(), 0).versionCode;
 				} catch (NameNotFoundException e) {
 					Log.w("KirimFidbek", "package get versioncode", e);
 				}
@@ -113,7 +112,7 @@ public class PengirimFidbek {
 					params.add(new BasicNameValuePair("fidbek_isi[]", isi));
 				}
 
-				String uniqueId = Settings.Secure.getString(activity_.getContentResolver(), Settings.Secure.ANDROID_ID);
+				String uniqueId = Settings.Secure.getString(context_.getContentResolver(), Settings.Secure.ANDROID_ID);
 				if (uniqueId == null) {
 					uniqueId = "null;FINGERPRINT=" + Build.FINGERPRINT;
 				}

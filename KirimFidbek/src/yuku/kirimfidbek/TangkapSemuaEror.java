@@ -3,18 +3,13 @@ package yuku.kirimfidbek;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import android.app.*;
-import android.util.Log;
+import android.util.*;
 
 public class TangkapSemuaEror {
 	private final PengirimFidbek pengirimFidbek_;
-	private final Activity activity_;
-	private final String pesanEror_;
 	
-	TangkapSemuaEror(PengirimFidbek pengirimFidbek, Activity activity, String pesanEror) {
+	TangkapSemuaEror(PengirimFidbek pengirimFidbek) {
 		pengirimFidbek_ = pengirimFidbek;
-		activity_ = activity;
-		pesanEror_ = pesanEror;
 	}
 	
 	private UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
@@ -32,19 +27,13 @@ public class TangkapSemuaEror {
 			
 			// Coba tunggu 4 detik sebelum ancur. Ato ancur aja ya?
 			try {
-				new AlertDialog.Builder(activity_)
-				.setMessage(pesanEror_)
-				.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-				.setPositiveButton("OK", null)
-				.show();
-				
 				Thread.sleep(4000);
 			} catch (InterruptedException e1) {
 			}
 			
 			Log.w("KirimFidbek", "DUEH selesai.");
 			
-			throw new RuntimeException("dari DUEH", e);
+			System.exit(1);
 		}
 	};
 
