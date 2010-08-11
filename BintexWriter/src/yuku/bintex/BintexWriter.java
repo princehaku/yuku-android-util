@@ -72,6 +72,16 @@ public class BintexWriter {
 		writeInt(a);
 	}
 	
+	public void writeRaw(byte[] buf) throws IOException {
+		writeRaw(buf, 0, buf.length);
+	}
+	
+	public void writeRaw(byte[] buf, int off, int len) throws IOException {
+		os_.write(buf, off, len);
+		
+		pos += len;
+	}
+	
 	public void close() throws IOException {
 		os_.close();
 	}
