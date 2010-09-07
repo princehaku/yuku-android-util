@@ -3,9 +3,11 @@ package yuku.kirimfidbek;
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
 
-import android.util.*;
+import android.util.Log;
 
 public class TangkapSemuaEror {
+	public static final String TAG = "KirimFidbek"; //$NON-NLS-1$
+	
 	private final PengirimFidbek pengirimFidbek_;
 	
 	TangkapSemuaEror(PengirimFidbek pengirimFidbek) {
@@ -18,9 +20,9 @@ public class TangkapSemuaEror {
 			StringWriter sw = new StringWriter(4000);
 			e.printStackTrace(new PrintWriter(sw, true));
 			
-			String pesanDueh = "[DUEH] thread: " + t.getName() + " (" + t.getId() + ")\n" + sw.toString();
+			String pesanDueh = "[DUEH] thread: " + t.getName() + " (" + t.getId() + ")\n" + sw.toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
-			Log.w("KirimFidbek", pesanDueh);
+			Log.w(TAG, pesanDueh);
 			
 			pengirimFidbek_.tambah(pesanDueh);
 			pengirimFidbek_.cobaKirim();
@@ -31,7 +33,7 @@ public class TangkapSemuaEror {
 			} catch (InterruptedException e1) {
 			}
 			
-			Log.w("KirimFidbek", "DUEH selesai.");
+			Log.w(TAG, "DUEH selesai."); //$NON-NLS-1$
 			
 			System.exit(1);
 		}

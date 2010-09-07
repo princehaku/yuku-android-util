@@ -1,9 +1,9 @@
 package yuku.ambilwarna;
 
-import android.app.*;
+import android.app.AlertDialog;
 import android.content.*;
-import android.graphics.*;
-import android.util.*;
+import android.graphics.Color;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 
@@ -44,7 +44,7 @@ public class AmbilWarnaDialog {
 		
 		satudp = context.getResources().getDimension(R.dimen.ambilwarna_satudp);
 		ukuranUiPx = ukuranUiDp * satudp;
-		Log.d(TAG, "satudp = " + satudp + ", ukuranUiPx=" + ukuranUiPx);
+		Log.d(TAG, "satudp = " + satudp + ", ukuranUiPx=" + ukuranUiPx);  //$NON-NLS-1$//$NON-NLS-2$
 		
 		View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
 		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
@@ -116,7 +116,7 @@ public class AmbilWarnaDialog {
 		
 		dialog = new AlertDialog.Builder(context)
 		.setView(view)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		.setPositiveButton(R.string.ambilwarna_ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (AmbilWarnaDialog.this.listener != null) {
@@ -124,7 +124,7 @@ public class AmbilWarnaDialog {
 				}
 			}
 		})
-		.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		.setNegativeButton(R.string.ambilwarna_cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				if (AmbilWarnaDialog.this.listener != null) {

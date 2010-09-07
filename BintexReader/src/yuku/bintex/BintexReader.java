@@ -19,7 +19,7 @@ public class BintexReader {
 		if (len < 0) {
 			throw new EOFException();
 		} else if (len == 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		// max len = 255, maka buf pasti cukup
@@ -35,7 +35,7 @@ public class BintexReader {
 	public String readLongString() throws IOException {
 		int len = readInt();
 		if (len == 0) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		if (len > buf.length) {
