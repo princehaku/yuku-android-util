@@ -50,6 +50,49 @@ public class BintexReader {
 		return new String(_buf, 0, len);
 	}
 	
+	/**
+	 * Baca pake 8-bit atau 16-bit
+	 * 
+	 * byte pertama menentukan
+	 * 0x01 = 8 bit short
+	 * 0x02 = 16 bit short
+	 * 0x11 = 8 bit long
+	 * 0x12 = 16 bit long
+	 */
+	public String readAutoString() throws IOException {
+		int jenis = readUint8();
+		int len = 0;
+		if (jenis == 0x01 || jenis == 0x02) {
+			len = readUint8();
+		} else if (jenis == 0x11 || jenis == 0x12) {
+			len = readInt();
+		}
+		
+		if (len > buf.length) {
+			this.buf = new char[len + 1024];
+		}
+		
+		if (jenis == 0x01 || jenis == 0x11) {
+			char[] _buf = this.buf;
+			for (int i = 0; i < len; i++) {
+				_buf[i] = (char) is_.read();
+			}
+			pos_ += len;
+			
+			return new String(_buf, 0, len);
+		} else if (jenis == 0x02 || jenis == 0x12) {
+			char[] _buf = this.buf;
+			for (int i = 0; i < len; i++) {
+				_buf[i] = readCharTanpaNaikPos();
+			}
+			pos_ += len + len;
+			
+			return new String(_buf, 0, len);
+		} else {
+			return null;
+		}
+	}
+	
 	public int readInt() throws IOException {
 		int res = (is_.read() << 24) | (is_.read() << 16) | (is_.read() << 8) | (is_.read());
 		pos_ += 4;
