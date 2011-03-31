@@ -394,4 +394,10 @@ public final class MenuItemImpl implements MenuItem {
 	public boolean hasSubMenu() {
 		return false;
 	}
+	
+	// ERROR REPORT 2010-01-08 don't know from where.
+	//java.lang.AbstractMethodError: abstract method not implemented
+	//at yuku.androidsdk.com.android.internal.view.menu.MenuItemImpl.setShortcutLabel(MenuItemImpl.java)
+	// so, dummy implementation:
+	public void setShortcutLabel(String whatever) {}
 }
