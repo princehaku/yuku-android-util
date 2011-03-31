@@ -41,6 +41,51 @@ public class BintexWriter {
 		}
 	}
 	
+	/**
+	 * Tulis pake 8-bit atau 16-bit
+	 * 
+	 * byte pertama menentukan
+	 * 0x01 = 8 bit short
+	 * 0x02 = 16 bit short
+	 * 0x11 = 8 bit long
+	 * 0x12 = 16 bit long
+	 */
+	public void writeAutoString(String s) throws IOException {
+		// cek dulu apa semuanya 8 bit
+		boolean semua8bit = true;
+		int len = s.length();
+		for (int i = 0; i < len; i++) {
+			char c = s.charAt(i);
+			if (c > 0xff) {
+				semua8bit = false;
+				break;
+			}
+		}
+		
+		if (len <= 255 && semua8bit) writeUint8(0x01);
+		if (len >  255 && semua8bit) writeUint8(0x11);
+		if (len <= 255 && !semua8bit) writeUint8(0x02);
+		if (len >  255 && !semua8bit) writeUint8(0x12);
+		
+		if (len <= 255) {
+			writeUint8(len);
+		} else {
+			writeInt(len);
+		}
+		
+		if (semua8bit) {
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				writeUint8(c);
+			}
+		} else {
+			for (int i = 0; i < s.length(); i++) {
+				char c = s.charAt(i);
+				writeChar(c);
+			}
+		}
+	}
+	
 	public void writeInt(int a) throws IOException {
 		os_.write((a & 0xff000000) >> 24);
 		os_.write((a & 0x00ff0000) >> 16);
