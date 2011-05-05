@@ -21,7 +21,8 @@ public class FileChooserActivity extends Activity {
 		return res;
 	}
 	
-	public static FileChooserResult getResult(Intent data) {
+	public static FileChooserResult obtainResult(Intent data) {
+		if (data == null) return null;
 		return data.getParcelableExtra(EXTRA_result);
 	}
 	
@@ -118,11 +119,21 @@ public class FileChooserActivity extends Activity {
 				if (a.isDirectory() && !b.isDirectory()) {
 					return -1;
 				} else if (!a.isDirectory() && b.isDirectory()) {
-					return 1;
+					return +1;
+				}
+				// both files or both dirs
+				
+				String aname = a.getName();
+				String bname = b.getName();
+				
+				// dot-files are later
+				if (aname.startsWith(".") && !bname.startsWith(".")) {
+					return +1;
+				} else if (!aname.startsWith(".") && bname.startsWith(".")) {
+					return -1;
 				}
 				
-				// both files or both dirs
-				return a.getName().compareToIgnoreCase(b.getName());
+				return aname.compareToIgnoreCase(bname);
 			}
 		});
 		
@@ -161,7 +172,7 @@ public class FileChooserActivity extends Activity {
 			
 			if (position == 0) {
 				res.setText("[Parent folder]");
-				res.setCompoundDrawablesWithIntrinsicBounds(R.drawable.filechooser_folder, 0, 0, 0);
+				res.setCompoundDrawablesWithIntrinsicBounds(R.drawable.filechooser_up, 0, 0, 0);
 			} else {
 				File file = getItem(position);
 				res.setText(file.getName());
