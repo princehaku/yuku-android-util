@@ -135,4 +135,17 @@ public class BintexWriter {
 		return pos;
 	}
 
+	public OutputStream getOutputStream() {
+		return new OutputStream() {
+			@Override
+			public void write(int oneByte) throws IOException {
+				writeUint8(oneByte);
+			}
+			
+			@Override
+			public void write(byte[] buffer, int offset, int count) throws IOException {
+				writeRaw(buffer, offset, count);
+			}
+		};
+	}
 }
