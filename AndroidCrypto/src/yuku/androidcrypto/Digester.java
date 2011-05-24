@@ -1,8 +1,8 @@
 
 package yuku.androidcrypto;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
+import java.io.*;
+import java.security.*;
 
 public class Digester {
 	public static byte[] digest(DigestType type, byte[] data) {
@@ -16,6 +16,31 @@ public class Digester {
 	 */
 	public static byte[] digest(DigestType type, String data) {
 		return digest(type, utf8Encode(data));
+	}
+	
+	public static byte[] digestFile(DigestType type, File file) {
+		BufferedInputStream is = null;
+		try {
+			is = new BufferedInputStream(new FileInputStream(file), 64*1024);
+			byte[] buf = new byte[8192];
+			
+			MessageDigest md = type.getMessageDigest();
+			while (true) {
+				int read = is.read(buf);
+				if (read < 0) break;
+				md.update(buf, 0, read);
+			}
+			return md.digest();
+		} catch (IOException e) {
+			return null;
+		} finally {
+			if (is != null) {
+				try {
+					is.close();
+				} catch (IOException e) {
+				}
+			}
+		}
 	}
 	
 	public static byte[] utf8Encode(String s) {

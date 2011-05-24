@@ -1,12 +1,12 @@
 package yuku.androidcrypto;
 
-import java.security.*;
+import android.util.*;
 
-import android.util.Log;
+import java.security.*;
 
 public enum DigestType {
 	MD5("MD5"),
-	SHA128("SHA1"),
+	SHA1("SHA1"),
 	SHA256("SHA256"),
 	SHA512("SHA512");
 	
