@@ -45,7 +45,7 @@ public class Digester {
 	
 	public static byte[] utf8Encode(String s) {
 		try {
-			return s.getBytes("utf-8");
+			return s.getBytes("utf-8"); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			return null;
 		}
