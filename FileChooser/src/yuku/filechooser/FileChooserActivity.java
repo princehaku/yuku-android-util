@@ -3,6 +3,7 @@ package yuku.filechooser;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import yuku.alkitab.R;
 
 import android.app.Activity;
 import android.content.*;
@@ -12,7 +13,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class FileChooserActivity extends Activity {
-	private static final String EXTRA_config = "config";
+	private static final String EXTRA_config = "config"; //$NON-NLS-1$
 	private static final String EXTRA_result = null;
 
 	public static Intent createIntent(Context context, FileChooserConfig config) {
@@ -101,7 +102,7 @@ public class FileChooserActivity extends Activity {
 				}
 				
 				if (m == null) {
-					m = Pattern.compile(config.pattern).matcher("");
+					m = Pattern.compile(config.pattern).matcher(""); //$NON-NLS-1$
 				}
 				
 				m.reset(pathname.getName());
@@ -127,9 +128,9 @@ public class FileChooserActivity extends Activity {
 				String bname = b.getName();
 				
 				// dot-files are later
-				if (aname.startsWith(".") && !bname.startsWith(".")) {
+				if (aname.startsWith(".") && !bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return +1;
-				} else if (!aname.startsWith(".") && bname.startsWith(".")) {
+				} else if (!aname.startsWith(".") && bname.startsWith(".")) { //$NON-NLS-1$ //$NON-NLS-2$
 					return -1;
 				}
 				
@@ -171,7 +172,7 @@ public class FileChooserActivity extends Activity {
 			TextView res = (TextView) (convertView != null? convertView: LayoutInflater.from(getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null));
 			
 			if (position == 0) {
-				res.setText("[Parent folder]");
+				res.setText(R.string.filechooser_parent_folder);
 				res.setCompoundDrawablesWithIntrinsicBounds(R.drawable.filechooser_up, 0, 0, 0);
 			} else {
 				File file = getItem(position);
