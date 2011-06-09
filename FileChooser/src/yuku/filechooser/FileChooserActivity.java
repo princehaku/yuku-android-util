@@ -1,16 +1,15 @@
 package yuku.filechooser;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-import yuku.alkitab.R;
-
-import android.app.Activity;
+import android.app.*;
 import android.content.*;
 import android.os.*;
 import android.view.*;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
 
 public class FileChooserActivity extends Activity {
 	private static final String EXTRA_config = "config"; //$NON-NLS-1$
