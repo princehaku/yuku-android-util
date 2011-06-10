@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+	<TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="Initial Dir" />
+	<EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/tInitialDir" />
+	<TextView android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Pattern" />
+	<EditText android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/tPattern" android:text=".*\\.(?i:txt|jpg|doc)" />
+	<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Title" />
+	<EditText android:layout_width="fill_parent" android:id="@+id/tTitle" android:layout_height="wrap_content" android:text="Choose a picture or a document" />
+	<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Show" android:id="@+id/bShow" android:onClick="bShow_click" />
+</LinearLayout>

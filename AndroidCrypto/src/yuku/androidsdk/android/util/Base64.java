@@ -16,7 +16,9 @@
 
 package yuku.androidsdk.android.util;
 
-import java.io.UnsupportedEncodingException;
+import android.util.*;
+
+import java.io.*;
 
 /**
  * Utilities for encoding and decoding the Base64 representation of
@@ -158,7 +160,7 @@ public class Base64 {
         Decoder decoder = new Decoder(flags, new byte[len*3/4]);
 
         if (!decoder.process(input, offset, len, true)) {
-            throw new IllegalArgumentException("bad base-64");
+            throw new IllegalArgumentException("bad base-64"); //$NON-NLS-1$
         }
 
         // Maybe we got lucky and allocated exactly enough output space.
@@ -250,7 +252,7 @@ public class Base64 {
          * @return an overestimate for the number of bytes {@code
          * len} bytes could decode to.
          */
-        public int maxOutputSize(int len) {
+        @Override public int maxOutputSize(int len) {
             return len * 3/4 + 10;
         }
 
@@ -260,7 +262,7 @@ public class Base64 {
          * @return true if the state machine is still healthy.  false if
          *         bad base-64 data has been detected in the input stream.
          */
-        public boolean process(byte[] input, int offset, int len, boolean finish) {
+        @Override public boolean process(byte[] input, int offset, int len, boolean finish) {
             if (this.state == 6) return false;
 
             int p = offset;
@@ -453,7 +455,7 @@ public class Base64 {
      */
     public static String encodeToString(byte[] input, int flags) {
         try {
-            return new String(encode(input, flags), "US-ASCII");
+            return new String(encode(input, flags), "US-ASCII"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             // US-ASCII is guaranteed to be available.
             throw new AssertionError(e);
@@ -474,7 +476,7 @@ public class Base64 {
      */
     public static String encodeToString(byte[] input, int offset, int len, int flags) {
         try {
-            return new String(encode(input, offset, len, flags), "US-ASCII");
+            return new String(encode(input, offset, len, flags), "US-ASCII"); //$NON-NLS-1$
         } catch (UnsupportedEncodingException e) {
             // US-ASCII is guaranteed to be available.
             throw new AssertionError(e);
@@ -596,11 +598,11 @@ public class Base64 {
          * @return an overestimate for the number of bytes {@code
          * len} bytes could encode to.
          */
-        public int maxOutputSize(int len) {
+        @Override public int maxOutputSize(int len) {
             return len * 8/5 + 10;
         }
 
-        public boolean process(byte[] input, int offset, int len, boolean finish) {
+        @Override public boolean process(byte[] input, int offset, int len, boolean finish) {
             // Using local variables makes the encoder about 9% faster.
             final byte[] alphabet = this.alphabet;
             final byte[] output = this.output;

@@ -18,7 +18,7 @@ public class BintexWriter {
 		int len = s.length();
 		
 		if (len > 255) {
-			throw new IllegalArgumentException("string must not more than 255 chars. String is: " + s);
+			throw new IllegalArgumentException("string must not more than 255 chars. String is: " + s); //$NON-NLS-1$
 		}
 		
 		os_.write(len);
@@ -104,7 +104,7 @@ public class BintexWriter {
 	
 	public void writeUint8(int a) throws IOException {
 		if (a < 0 || a > 255) {
-			throw new IllegalArgumentException("uint8 must be 0 to 255");
+			throw new IllegalArgumentException("uint8 must be 0 to 255"); //$NON-NLS-1$
 		}
 		
 		os_.write(a);
@@ -135,4 +135,17 @@ public class BintexWriter {
 		return pos;
 	}
 
+	public OutputStream getOutputStream() {
+		return new OutputStream() {
+			@Override
+			public void write(int oneByte) throws IOException {
+				writeUint8(oneByte);
+			}
+			
+			@Override
+			public void write(byte[] buffer, int offset, int count) throws IOException {
+				writeRaw(buffer, offset, count);
+			}
+		};
+	}
 }
