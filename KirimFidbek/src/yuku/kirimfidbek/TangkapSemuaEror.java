@@ -1,14 +1,14 @@
 package yuku.kirimfidbek;
 
+import android.util.*;
+
 import java.io.*;
 import java.lang.Thread.UncaughtExceptionHandler;
-
-import android.util.Log;
 
 public class TangkapSemuaEror {
 	public static final String TAG = "KirimFidbek"; //$NON-NLS-1$
 	
-	private final PengirimFidbek pengirimFidbek_;
+	final PengirimFidbek pengirimFidbek_;
 	
 	TangkapSemuaEror(PengirimFidbek pengirimFidbek) {
 		pengirimFidbek_ = pengirimFidbek;

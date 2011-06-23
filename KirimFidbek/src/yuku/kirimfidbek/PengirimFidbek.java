@@ -1,21 +1,21 @@
 package yuku.kirimfidbek;
 
-import java.io.*;
-import java.util.ArrayList;
-
-import org.apache.http.*;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.provider.Settings;
-import android.util.Log;
+import android.os.*;
+import android.provider.*;
+import android.util.*;
+
+import java.io.*;
+import java.util.*;
+
+import org.apache.http.*;
+import org.apache.http.client.*;
+import org.apache.http.client.entity.*;
+import org.apache.http.client.methods.*;
+import org.apache.http.impl.client.*;
+import org.apache.http.message.*;
 
 public class PengirimFidbek {
 	public static final String TAG = "KirimFidbek"; //$NON-NLS-1$
@@ -24,12 +24,12 @@ public class PengirimFidbek {
 		void onSuccess(byte[] response);
 	}
 	
-	private final Context context_;
-	private final SharedPreferences offlineBuffer_;
-	private TangkapSemuaEror tangkapSemuaEror_;
-	private ArrayList<String> xisi_;
-	private OnSuccessListener onSuccessListener_ = null;
-	private boolean lagiKirim_ = false;
+	final Context context_;
+	final SharedPreferences offlineBuffer_;
+	TangkapSemuaEror tangkapSemuaEror_;
+	ArrayList<String> xisi_;
+	OnSuccessListener onSuccessListener_ = null;
+	boolean lagiKirim_ = false;
 	
 	public PengirimFidbek(Context context, SharedPreferences offlineBuffer) {
 		context_ = context;
@@ -52,7 +52,7 @@ public class PengirimFidbek {
 		simpan();
 	}
 
-	private synchronized void simpan() {
+	synchronized void simpan() {
 		if (xisi_ == null) return;
 
 		Editor editor = offlineBuffer_.edit();
@@ -75,7 +75,7 @@ public class PengirimFidbek {
 		new Pengirim().start();
 	}
 
-	private synchronized void muat() {
+	synchronized void muat() {
 		if (xisi_ == null) {
 			xisi_ = new ArrayList<String>();
 			int nfidbek = offlineBuffer_.getInt("nfidbek", 0); //$NON-NLS-1$
@@ -89,7 +89,10 @@ public class PengirimFidbek {
 		}
 	}
 
-	private class Pengirim extends Thread {
+	class Pengirim extends Thread {
+		public Pengirim() {
+		}
+
 		@Override
 		public void run() {
 			boolean berhasil = false;

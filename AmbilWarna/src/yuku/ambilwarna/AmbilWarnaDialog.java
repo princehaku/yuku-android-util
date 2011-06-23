@@ -1,9 +1,9 @@
 package yuku.ambilwarna;
 
-import android.app.AlertDialog;
+import android.app.*;
 import android.content.*;
-import android.graphics.Color;
-import android.util.Log;
+import android.graphics.*;
+import android.util.*;
 import android.view.*;
 import android.widget.*;
 
@@ -158,7 +158,7 @@ public class AmbilWarnaDialog {
 	}
 
 	float[] tmp01 = new float[3];
-	private int hitungWarna() {
+	int hitungWarna() {
 		tmp01[0] = hue;
 		tmp01[1] = sat;
 		tmp01[2] = val;

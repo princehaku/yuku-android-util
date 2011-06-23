@@ -12,8 +12,8 @@ import java.util.*;
 import java.util.regex.*;
 
 public class FileChooserActivity extends Activity {
-	private static final String EXTRA_config = "config"; //$NON-NLS-1$
-	private static final String EXTRA_result = null;
+	static final String EXTRA_config = "config"; //$NON-NLS-1$
+	static final String EXTRA_result = null;
 
 	public static Intent createIntent(Context context, FileChooserConfig config) {
 		Intent res = new Intent(context, FileChooserActivity.class);
@@ -86,7 +86,7 @@ public class FileChooserActivity extends Activity {
 		ls();
 	}
 
-	private void ls() {
+	void ls() {
 		File[] files = cd.listFiles(new FileFilter() {
 			Matcher m;
 
