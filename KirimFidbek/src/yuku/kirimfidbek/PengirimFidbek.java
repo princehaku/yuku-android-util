@@ -137,6 +137,7 @@ public class PengirimFidbek {
 					params.add(new BasicNameValuePair("package_versionCode[]", String.valueOf(entri.versionCode))); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("timestamp[]", String.valueOf(entri.timestamp))); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("build_product[]", getBuildProduct()));
+					params.add(new BasicNameValuePair("build_device[]", getBuildDevice()));
 					params.add(new BasicNameValuePair("version_sdk[]", entri.versionSdk));
 				}
 
@@ -194,6 +195,10 @@ public class PengirimFidbek {
 
 	String getBuildProduct() {
 		return Build.PRODUCT;
+	}
+	
+	String getBuildDevice() {
+		return Build.DEVICE;
 	}
 
 	String getUniqueId() {
