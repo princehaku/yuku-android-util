@@ -48,6 +48,8 @@ public class PengirimFidbek {
 	public PengirimFidbek(Context context, SharedPreferences offlineBuffer) {
 		context_ = context;
 		offlineBuffer_ = offlineBuffer;
+		
+		getUniqueId(); // picu pembuatan uniqueId.
 	}
 	
 	public void setOnSuccessListener(OnSuccessListener onSuccessListener) {
