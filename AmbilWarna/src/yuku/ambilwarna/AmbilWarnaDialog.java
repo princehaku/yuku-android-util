@@ -2,170 +2,197 @@ package yuku.ambilwarna;
 
 import android.app.*;
 import android.content.*;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.*;
-import android.util.*;
 import android.view.*;
 import android.widget.*;
 
 public class AmbilWarnaDialog {
-	private static final String TAG = AmbilWarnaDialog.class.getSimpleName();
-	
 	public interface OnAmbilWarnaListener {
 		void onCancel(AmbilWarnaDialog dialog);
 		void onOk(AmbilWarnaDialog dialog, int color);
 	}
-	
-	AlertDialog dialog;
-	OnAmbilWarnaListener listener;
-	View viewHue;
-	AmbilWarnaKotak viewKotak;
-	ImageView panah;
-	View viewWarnaLama;
-	View viewWarnaBaru;
-	ImageView viewKeker;
-	
-	float satudp;
-	int warnaLama;
-	int warnaBaru;
-	float hue;
-	float sat;
-	float val;
-	float ukuranUiDp = 240.f;
-	float ukuranUiPx; // diset di constructor
-	
-	public AmbilWarnaDialog(Context context, int color, OnAmbilWarnaListener listener) {
-		this.listener = listener;
-		this.warnaLama = color;
-		this.warnaBaru = color;
-		Color.colorToHSV(color, tmp01);
-		hue = tmp01[0];
-		sat = tmp01[1];
-		val = tmp01[2];
-		
-		satudp = context.getResources().getDimension(R.dimen.ambilwarna_satudp);
-		ukuranUiPx = ukuranUiDp * satudp;
-		Log.d(TAG, "satudp = " + satudp + ", ukuranUiPx=" + ukuranUiPx);  //$NON-NLS-1$//$NON-NLS-2$
-		
-		View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
-		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
-		viewKotak = (AmbilWarnaKotak) view.findViewById(R.id.ambilwarna_viewKotak);
-		panah = (ImageView) view.findViewById(R.id.ambilwarna_panah);
-		viewWarnaLama = view.findViewById(R.id.ambilwarna_warnaLama);
-		viewWarnaBaru = view.findViewById(R.id.ambilwarna_warnaBaru);
-		viewKeker = (ImageView) view.findViewById(R.id.ambilwarna_keker);
 
-		letakkanPanah();
-		letakkanKeker();
-		viewKotak.setHue(hue);
-		viewWarnaLama.setBackgroundColor(color);
-		viewWarnaBaru.setBackgroundColor(color);
+	final AlertDialog dialog;
+	final OnAmbilWarnaListener listener;
+	final View viewHue;
+	final AmbilWarnaKotak viewSatVal;
+	final ImageView viewCursor;
+	final View viewOldColor;
+	final View viewNewColor;
+	final ImageView viewTarget;
+	final ViewGroup viewContainer;
+	final float[] currentColorHsv = new float[3];
+
+	/**
+	 * create an AmbilWarnaDialog. call this only from OnCreateDialog() or from a background thread.
+	 * 
+	 * @param context
+	 *            current context
+	 * @param color
+	 *            current color
+	 * @param listener
+	 *            an OnAmbilWarnaListener, allowing you to get back error or
+	 */
+	public AmbilWarnaDialog(final Context context, int color, OnAmbilWarnaListener listener) {
+		this.listener = listener;
+		Color.colorToHSV(color, currentColorHsv);
+
+		final View view = LayoutInflater.from(context).inflate(R.layout.ambilwarna_dialog, null);
+		viewHue = view.findViewById(R.id.ambilwarna_viewHue);
+		viewSatVal = (AmbilWarnaKotak) view.findViewById(R.id.ambilwarna_viewSatBri);
+		viewCursor = (ImageView) view.findViewById(R.id.ambilwarna_cursor);
+		viewOldColor = view.findViewById(R.id.ambilwarna_warnaLama);
+		viewNewColor = view.findViewById(R.id.ambilwarna_warnaBaru);
+		viewTarget = (ImageView) view.findViewById(R.id.ambilwarna_target);
+		viewContainer = (ViewGroup) view.findViewById(R.id.ambilwarna_viewContainer);
+
+		viewSatVal.setHue(getHue());
+		viewOldColor.setBackgroundColor(color);
+		viewNewColor.setBackgroundColor(color);
 
 		viewHue.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_MOVE 
+			@Override public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_MOVE
 						|| event.getAction() == MotionEvent.ACTION_DOWN
 						|| event.getAction() == MotionEvent.ACTION_UP) {
-					
-					float y = event.getY(); // dalam px, bukan dp
+
+					float y = event.getY();
 					if (y < 0.f) y = 0.f;
-					if (y > ukuranUiPx) y = ukuranUiPx - 0.001f;
-					
-					hue = 360.f - 360.f / ukuranUiPx * y;
+					if (y > viewHue.getMeasuredHeight()) y = viewHue.getMeasuredHeight() - 0.001f; // to avoid looping from end to start.
+					float hue = 360.f - 360.f / viewHue.getMeasuredHeight() * y;
 					if (hue == 360.f) hue = 0.f;
-					
-					warnaBaru = hitungWarna();
+					setHue(hue);
+
 					// update view
-					viewKotak.setHue(hue);
-					letakkanPanah();
-					viewWarnaBaru.setBackgroundColor(warnaBaru);
-					
+					viewSatVal.setHue(getHue());
+					moveCursor();
+					viewNewColor.setBackgroundColor(getColor());
+
 					return true;
 				}
 				return false;
 			}
 		});
-		viewKotak.setOnTouchListener(new View.OnTouchListener() {
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_MOVE 
+		viewSatVal.setOnTouchListener(new View.OnTouchListener() {
+			@Override public boolean onTouch(View v, MotionEvent event) {
+				if (event.getAction() == MotionEvent.ACTION_MOVE
 						|| event.getAction() == MotionEvent.ACTION_DOWN
 						|| event.getAction() == MotionEvent.ACTION_UP) {
-					
-					float x = event.getX(); // dalam px, bukan dp
-					float y = event.getY(); // dalam px, bukan dp
-					
+
+					float x = event.getX(); // touch event are in dp units.
+					float y = event.getY();
+
 					if (x < 0.f) x = 0.f;
-					if (x > ukuranUiPx) x = ukuranUiPx;
+					if (x > viewSatVal.getMeasuredWidth()) x = viewSatVal.getMeasuredWidth();
 					if (y < 0.f) y = 0.f;
-					if (y > ukuranUiPx) y = ukuranUiPx;
+					if (y > viewSatVal.getMeasuredHeight()) y = viewSatVal.getMeasuredHeight();
 
-					sat = (1.f / ukuranUiPx * x);
-					val = 1.f - (1.f / ukuranUiPx * y);
+					setSat(1.f / viewSatVal.getMeasuredWidth() * x);
+					setVal(1.f - (1.f / viewSatVal.getMeasuredHeight() * y));
 
-					warnaBaru = hitungWarna();
 					// update view
-					letakkanKeker();
-					viewWarnaBaru.setBackgroundColor(warnaBaru);
-					
+					moveTarget();
+					viewNewColor.setBackgroundColor(getColor());
+
 					return true;
 				}
 				return false;
 			}
 		});
-		
+
 		dialog = new AlertDialog.Builder(context)
-		.setView(view)
-		.setPositiveButton(R.string.ambilwarna_ok, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, warnaBaru);
+			.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					if (AmbilWarnaDialog.this.listener != null) {
+						AmbilWarnaDialog.this.listener.onOk(AmbilWarnaDialog.this, getColor());
+					}
 				}
-			}
-		})
-		.setNegativeButton(R.string.ambilwarna_cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (AmbilWarnaDialog.this.listener != null) {
-					AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+			})
+			.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+				@Override public void onClick(DialogInterface dialog, int which) {
+					if (AmbilWarnaDialog.this.listener != null) {
+						AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+					}
 				}
+			})
+			.setOnCancelListener(new OnCancelListener() {
+				// if back button is used, call back our listener.
+				@Override public void onCancel(DialogInterface paramDialogInterface) {
+					if (AmbilWarnaDialog.this.listener != null) {
+						AmbilWarnaDialog.this.listener.onCancel(AmbilWarnaDialog.this);
+					}
+
+				}
+			})
+			.create();
+		// kill all padding from the dialog window
+		dialog.setView(view, 0, 0, 0, 0);
+
+		// move cursor & target on first draw
+		ViewTreeObserver vto = view.getViewTreeObserver();
+		vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override public void onGlobalLayout() {
+				moveCursor();
+				moveTarget();
+				view.getViewTreeObserver().removeGlobalOnLayoutListener(this);
 			}
-		})
-		.create();
-		
-	}
-	
-	@SuppressWarnings("deprecation")
-	protected void letakkanPanah() {
-		float y = ukuranUiPx - (hue * ukuranUiPx / 360.f);
-		if (y == ukuranUiPx) y = 0.f;
-		
-		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) panah.getLayoutParams();
-		layoutParams.y = (int) (y + 4);
-		panah.setLayoutParams(layoutParams);
+		});
 	}
 
-	@SuppressWarnings("deprecation")
-	protected void letakkanKeker() {
-		float x = sat * ukuranUiPx;
-		float y = (1.f - val) * ukuranUiPx;
-		
-		AbsoluteLayout.LayoutParams layoutParams = (AbsoluteLayout.LayoutParams) viewKeker.getLayoutParams();
-		layoutParams.x = (int) (x + 3);
-		layoutParams.y = (int) (y + 3);
-		viewKeker.setLayoutParams(layoutParams);
+	protected void moveCursor() {
+		float y = viewHue.getMeasuredHeight() - (getHue() * viewHue.getMeasuredHeight() / 360.f);
+		if (y == viewHue.getMeasuredHeight()) y = 0.f;
+		RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) viewCursor.getLayoutParams();
+		layoutParams.leftMargin = (int) (viewHue.getLeft() - Math.floor(viewCursor.getMeasuredWidth() / 2) - viewContainer.getPaddingLeft());
+		;
+		layoutParams.topMargin = (int) (viewHue.getTop() + y - Math.floor(viewCursor.getMeasuredHeight() / 2) - viewContainer.getPaddingTop());
+		;
+		viewCursor.setLayoutParams(layoutParams);
 	}
 
-	float[] tmp01 = new float[3];
-	int hitungWarna() {
-		tmp01[0] = hue;
-		tmp01[1] = sat;
-		tmp01[2] = val;
-		return Color.HSVToColor(tmp01);
+	protected void moveTarget() {
+		float x = getSat() * viewSatVal.getMeasuredWidth();
+		float y = (1.f - getVal()) * viewSatVal.getMeasuredHeight();
+		RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) viewTarget.getLayoutParams();
+		layoutParams.leftMargin = (int) (viewSatVal.getLeft() + x - Math.floor(viewTarget.getMeasuredWidth() / 2) - viewContainer.getPaddingLeft());
+		layoutParams.topMargin = (int) (viewSatVal.getTop() + y - Math.floor(viewTarget.getMeasuredHeight() / 2) - viewContainer.getPaddingTop());
+		viewTarget.setLayoutParams(layoutParams);
+	}
+
+	private int getColor() {
+		return Color.HSVToColor(currentColorHsv);
+	}
+
+	private float getHue() {
+		return currentColorHsv[0];
+	}
+
+	private float getSat() {
+		return currentColorHsv[1];
+	}
+
+	private float getVal() {
+		return currentColorHsv[2];
+	}
+
+	private void setHue(float hue) {
+		currentColorHsv[0] = hue;
+	}
+
+	private void setSat(float sat) {
+		currentColorHsv[1] = sat;
+	}
+
+	private void setVal(float val) {
+		currentColorHsv[2] = val;
 	}
 
 	public void show() {
 		dialog.show();
+	}
+
+	public AlertDialog getDialog() {
+		return dialog;
 	}
 }
