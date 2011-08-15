@@ -85,6 +85,7 @@ public class PengirimFidbek {
 				editor.putString("fidbek/" + i + "/isi", entri.isi); //$NON-NLS-1$ //$NON-NLS-2$
 				editor.putInt("fidbek/" + i + "/versionCode", entri.versionCode); //$NON-NLS-1$ //$NON-NLS-2$
 				editor.putInt("fidbek/" + i + "/timestamp", entri.timestamp); //$NON-NLS-1$ //$NON-NLS-2$
+				editor.putString("fidbek/" + i + "/versionSdk", getVersionSdk()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		editor.commit();
