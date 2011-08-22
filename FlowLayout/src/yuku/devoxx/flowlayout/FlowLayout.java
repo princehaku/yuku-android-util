@@ -85,7 +85,7 @@ public class FlowLayout extends ViewGroup {
 		Log.d(TAG, "onMeasure w=" + width + " h=" + height + " widthMeasureSpec=" + Integer.toHexString(widthMeasureSpec) + " heightMeasureSpec=" + Integer.toHexString(heightMeasureSpec));
 		
 		// don't resolve height (patched by yuku)
-		setMeasuredDimension(width, height);
+		setMeasuredDimension(resolveSize(width, widthMeasureSpec), resolveSize(height, heightMeasureSpec));
 	}
 	
 	@Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
