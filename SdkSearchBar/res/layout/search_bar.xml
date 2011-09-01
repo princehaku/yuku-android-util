@@ -24,7 +24,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:focusable="true"
-    android:descendantFocusability="afterDescendants">
+    android:descendantFocusability="afterDescendants"
+	android:background="@drawable/search_plate_global_noshadow">
 
     <!-- Outer layout defines the entire search bar at the top of the screen -->
     <LinearLayout
@@ -33,8 +34,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingLeft="12dip"
-        android:paddingRight="12dip"
-        android:background="@drawable/search_plate_global_noshadow">
+        android:paddingRight="12dip">
 
         <!-- This is actually used for the badge icon *or* the badge label (or neither) -->
         <TextView 

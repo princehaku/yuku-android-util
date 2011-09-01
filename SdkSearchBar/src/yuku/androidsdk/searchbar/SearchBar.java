@@ -20,6 +20,7 @@ public class SearchBar extends LinearLayout {
 	EditText tSearch;
 	Button bSearch;
 	Button bExtra1;
+	LinearLayout root;
 	OnSearchListener onSearchListener;
 	
 	public SearchBar(Context context) {
@@ -39,6 +40,7 @@ public class SearchBar extends LinearLayout {
         tSearch = (EditText) findViewById(R.id.search_src_text);
         bSearch = (Button) findViewById(R.id.search_go_btn);
         bExtra1 = (Button) findViewById(R.id.search_extra1_btn);
+        root = (LinearLayout) findViewById(R.id.search_bar);
         
         tSearch.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -88,5 +90,21 @@ public class SearchBar extends LinearLayout {
 	
 	public Button getSearchExtra1() {
 		return bExtra1;
+	}
+	
+	public void setBottomView(View v) {
+		// note that the root has 1 child already. So we need to add/replace the second child and so on.
+		if (root.getChildCount() > 1) {
+			root.removeViews(1, root.getChildCount() - 1);
+		}
+		v.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+		root.addView(v);
+	}
+	
+	@SuppressWarnings("unchecked") public <T extends View> T getBottomView() {
+		if (root.getChildCount() <= 1) {
+			return null;
+		}
+		return (T) root.getChildAt(1);
 	}
 }
