@@ -11,12 +11,8 @@ public class AmbilWarnaKotak extends View {
 	Shader luar;
 	final float[] color = { 1.f, 1.f, 1.f };
 
-	public AmbilWarnaKotak(Context context) {
-		this(context, null);
-	}
-
 	public AmbilWarnaKotak(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
+		super(context, attrs);
 	}
 
 	public AmbilWarnaKotak(Context context, AttributeSet attrs, int defStyle) {
