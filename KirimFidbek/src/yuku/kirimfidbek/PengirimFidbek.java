@@ -109,7 +109,7 @@ public class PengirimFidbek {
 				String isi = offlineBuffer_.getString("fidbek/" + i + "/isi", null); //$NON-NLS-1$ //$NON-NLS-2$
 				int versionCode = offlineBuffer_.getInt("fidbek/" + i + "/versionCode", 0); //$NON-NLS-1$ //$NON-NLS-2$
 				int timestamp = offlineBuffer_.getInt("fidbek/" + i + "/timestamp", 0); //$NON-NLS-1$ //$NON-NLS-2$
-				String versionSdk = offlineBuffer_.getString("fidbek/" + i + "/versionSdk", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+				String versionSdk = offlineBuffer_.getString("fidbek/" + i + "/versionSdk", "0"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
 				xentri_.add(new Entri(isi, versionCode, timestamp, versionSdk));
 			}
@@ -132,14 +132,14 @@ public class PengirimFidbek {
 				ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
 
 				for (Entri entri: xentri_) {
-					params.add(new BasicNameValuePair("uniqueId[]", getUniqueId()));
+					params.add(new BasicNameValuePair("uniqueId[]", getUniqueId())); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("package_name[]", context_.getPackageName())); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("fidbek_isi[]", entri.isi)); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("package_versionCode[]", String.valueOf(entri.versionCode))); //$NON-NLS-1$
 					params.add(new BasicNameValuePair("timestamp[]", String.valueOf(entri.timestamp))); //$NON-NLS-1$
-					params.add(new BasicNameValuePair("build_product[]", getBuildProduct()));
-					params.add(new BasicNameValuePair("build_device[]", getBuildDevice()));
-					params.add(new BasicNameValuePair("version_sdk[]", entri.versionSdk));
+					params.add(new BasicNameValuePair("build_product[]", getBuildProduct())); //$NON-NLS-1$
+					params.add(new BasicNameValuePair("build_device[]", getBuildDevice())); //$NON-NLS-1$
+					params.add(new BasicNameValuePair("version_sdk[]", entri.versionSdk)); //$NON-NLS-1$
 				}
 
 				post.setEntity(new UrlEncodedFormEntity(params, "utf-8")); //$NON-NLS-1$
@@ -203,10 +203,10 @@ public class PengirimFidbek {
 	}
 
 	String getUniqueId() {
-		String uniqueId = offlineBuffer_.getString("fidbek_uniqueId", null);
+		String uniqueId = offlineBuffer_.getString("fidbek_uniqueId", null); //$NON-NLS-1$
 		if (uniqueId == null) {
-			uniqueId = "u2:" + UUID.randomUUID().toString();
-			offlineBuffer_.edit().putString("fidbek_uniqueId", uniqueId).commit();
+			uniqueId = "u2:" + UUID.randomUUID().toString(); //$NON-NLS-1$
+			offlineBuffer_.edit().putString("fidbek_uniqueId", uniqueId).commit(); //$NON-NLS-1$
 		}
 		return uniqueId;
 	}

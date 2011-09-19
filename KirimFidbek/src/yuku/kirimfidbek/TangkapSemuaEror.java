@@ -20,7 +20,7 @@ public class TangkapSemuaEror {
 			StringWriter sw = new StringWriter(4000);
 			e.printStackTrace(new PrintWriter(sw, true));
 			
-			String pesanDueh = "[DUEH2] thread: " + t.getName() + " (" + t.getId() + ") " + e.getClass().getName() + ": " + e.getMessage() + "\n" + sw.toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			String pesanDueh = "[DUEH2] thread: " + t.getName() + " (" + t.getId() + ") " + e.getClass().getName() + ": " + e.getMessage() + "\n" + sw.toString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			
 			Log.w(TAG, pesanDueh);
 			
