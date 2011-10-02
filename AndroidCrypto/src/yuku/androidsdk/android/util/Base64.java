@@ -16,8 +16,6 @@
 
 package yuku.androidsdk.android.util;
 
-import android.util.*;
-
 import java.io.*;
 
 /**
