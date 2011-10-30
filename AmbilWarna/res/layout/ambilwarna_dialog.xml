@@ -25,6 +25,7 @@
 		android:layout_marginLeft="@dimen/ambilwarna_spacer"
 		android:src="@drawable/ambilwarna_hue"
 		android:scaleType="fitXY"
+		android:layerType="software"
 	/>
 	<ImageView
 		android:id="@+id/ambilwarna_cursor"
@@ -49,6 +50,7 @@
 		android:layout_below="@id/ambilwarna_viewSatBri"
 		android:gravity="center"
 		android:layout_centerHorizontal="true"
+		android:layerType="software"
 	>
 		<View
 			android:layout_width="60dp"
