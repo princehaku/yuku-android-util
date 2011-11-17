@@ -69,20 +69,14 @@ public class FolderChooserActivity extends Activity {
 			config.roots = Arrays.asList(Environment.getExternalStorageDirectory().getAbsolutePath());
 		}
 		
-		FileTreeNode root;
 		
-		if (config.roots.size() == 1) {
-			root = new FileTreeNode(new File(config.roots.get(0)));
-			adapter.setRootVisible(true);
-		} else {
-			File[] children = new File[config.roots.size()];
-			for (int i = 0; i < config.roots.size(); i++) {
-				children[i] = new File(config.roots.get(i));
-			}
-			root = new FileTreeNode("root", children);
-			adapter.setRootVisible(false);
-			root.setExpanded(true);
+		File[] children = new File[config.roots.size()];
+		for (int i = 0; i < config.roots.size(); i++) {
+			children[i] = new File(config.roots.get(i));
 		}
+		FileTreeNode root = new FileTreeNode("root", children);
+		adapter.setRootVisible(false);
+		root.setExpanded(true);
 		
 		adapter.setRoot(root);
 	}
