@@ -10,5 +10,6 @@
 			</intent-filter>
 		</activity>
 		<activity android:name="yuku.filechooser.FileChooserActivity" />
+		<activity android:name="yuku.filechooser.FolderChooserActivity" />
 	</application>
 </manifest>
