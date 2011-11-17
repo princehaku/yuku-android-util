@@ -120,5 +120,13 @@ public class MainActivity extends Activity {
 		@Override protected BaseFileTreeNode generateForFile(File file) {
 			return new FileTreeNode(file);
 		}
+		
+		@Override protected boolean showHidden() {
+			return false;
+		}
+		
+		@Override protected boolean showDirectoriesOnly() {
+			return true;
+		}
 	}
 }

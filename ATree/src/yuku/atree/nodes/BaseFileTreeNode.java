@@ -26,7 +26,7 @@ public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Co
 		if (expanded) {
 			File[] files;
 			if (file != null && file.isDirectory()) {
-				files = file.listFiles();
+				files = file.listFiles(fileFilter);
 				if (files != null) Arrays.sort(files, fileComparator);
 			} else if (virtualChildren != null) {
 				files = virtualChildren;
@@ -56,6 +56,24 @@ public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Co
 			}
 		}
 	}
+	
+	private FileFilter fileFilter = new FileFilter() {
+		@Override public boolean accept(File pathname) {
+			if (showDirectoriesOnly()) {
+				if (!pathname.isDirectory()) {
+					return false;
+				}
+			}
+			
+			if (!showHidden()) {
+				if (pathname.isHidden()) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+	};
 	
 	static Comparator<File> fileComparator = new Comparator<File>() {
 		@Override public int compare(File a, File b) {
@@ -95,4 +113,20 @@ public abstract class BaseFileTreeNode extends BaseMutableTreeNode implements Co
 	}
 
 	protected abstract BaseFileTreeNode generateForFile(File file);
+	
+	protected boolean showDirectoriesOnly() {
+		return false;
+	}
+	
+	protected boolean showHidden() {
+		return true;
+	}
+
+	public File getFile() {
+		return file;
+	}
+	
+	public File[] getVirtualChildren() {
+		return virtualChildren;
+	}
 }
