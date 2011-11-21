@@ -144,7 +144,6 @@ public class FolderChooserActivity extends Activity {
 					bOk[0].setEnabled(false);
 				}
 			})
-			.setNegativeButton(android.R.string.cancel, null)
 			.show();
 			return true;
 		}
