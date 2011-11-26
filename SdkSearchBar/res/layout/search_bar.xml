@@ -65,7 +65,7 @@
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:inputType="text|textAutoComplete"
-            	android:imeOptions="actionSearch" />
+            	android:imeOptions="actionSearch" android:textColor="#000"/>
                 
             <!-- This button can switch between text and icon "modes" -->
             <Button 
