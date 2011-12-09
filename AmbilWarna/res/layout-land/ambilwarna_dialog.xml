@@ -63,8 +63,7 @@
 		android:layout_marginLeft="@dimen/ambilwarna_spacer"
 		android:src="@drawable/ambilwarna_hue"
 		android:scaleType="fitXY"
-		android:layerType="software"
-		 />
+	/>
 
 	<ImageView
 		android:id="@+id/ambilwarna_cursor"
