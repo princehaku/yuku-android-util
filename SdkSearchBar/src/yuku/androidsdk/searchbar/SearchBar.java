@@ -1,11 +1,16 @@
 package yuku.androidsdk.searchbar;
 
-import android.content.*;
-import android.text.*;
-import android.util.*;
-import android.view.*;
-import android.view.inputmethod.*;
-import android.widget.*;
+import android.content.Context;
+import android.text.Editable;
+import android.util.AttributeSet;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -42,6 +47,7 @@ public class SearchBar extends LinearLayout {
         bExtra1 = (Button) findViewById(R.id.search_extra1_btn);
         root = (LinearLayout) findViewById(R.id.search_bar);
         
+        if (isInEditMode()) return;
         tSearch.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_SEARCH) {
