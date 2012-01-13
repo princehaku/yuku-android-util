@@ -1,25 +1,39 @@
 package yuku.filechooser;
 
-import android.app.*;
-import android.content.*;
-import android.content.pm.*;
-import android.graphics.*;
-import android.os.*;
-import android.text.*;
-import android.text.style.*;
-import android.view.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Environment;
+import android.text.Editable;
+import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
+import android.text.style.StyleSpan;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.widget.*;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TextView.BufferType;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.Arrays;
 
-import yuku.atree.*;
-import yuku.atree.nodes.*;
+import yuku.atree.TreeAdapter;
+import yuku.atree.TreeNodeIconType;
+import yuku.atree.nodes.BaseFileTreeNode;
 
 public class FolderChooserActivity extends Activity {
 	static final String EXTRA_config = "config"; //$NON-NLS-1$
@@ -205,6 +219,7 @@ public class FolderChooserActivity extends Activity {
 		bOk.setEnabled(dir != null);
 		
 		if (dir != null) {
+			// display complete path
 			SpannableStringBuilder sb = new SpannableStringBuilder();
 			String parent = dir.getParent();
 			sb.append(parent == null? "": parent + "/");
@@ -212,6 +227,11 @@ public class FolderChooserActivity extends Activity {
 			sb.append(dir.getName());
 			sb.setSpan(new StyleSpan(Typeface.BOLD), sb_len, sb.length(), 0);
 			lPath.setText(sb, BufferType.SPANNABLE);
+			
+			// disable button if not writable
+			if (config.mustBeWritable && !dir.canWrite()) {
+				bOk.setEnabled(false);
+			}
 		} else {
 			lPath.setText("");
 		}
