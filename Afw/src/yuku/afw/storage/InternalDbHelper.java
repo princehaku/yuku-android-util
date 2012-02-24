@@ -1,6 +1,5 @@
 package yuku.afw.storage;
 
-import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -11,8 +10,8 @@ import yuku.afw.App;
 public abstract class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
 
-	public InternalDbHelper(Context context) {
-		super(context, "InternalDb", null, App.getVersionCode()); //$NON-NLS-1$
+	public InternalDbHelper() {
+		super(App.context, "InternalDb", null, App.getVersionCode()); //$NON-NLS-1$
 	}
 
 	@Override public void onOpen(SQLiteDatabase db) {

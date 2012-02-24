@@ -97,9 +97,10 @@ public class AsyncRequest<Z extends BaseData> {
 	public class Task<Y> extends AsyncTask<Request, Integer, Void> {
 		Response return_response;
 		Z return_data;
+		Request request;
 		
 		@Override protected Void doInBackground(Request... params) {
-			Request request = params[0];
+			request = params[0];
 
 			HttpPerformer httpPerformer = new HttpPerformer(this, request);
 			if (D.EBUG) Log.d(TAG, "async start [" + id + "] (" + getActiveCount() + " active, total " + Thread.activeCount() + " threads) " + request.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -108,11 +109,12 @@ public class AsyncRequest<Z extends BaseData> {
 			return_data = AsyncRequest.this.data;
 			
 			if (return_data.isSuccessResponse(return_response)) {
-				if (return_data instanceof JsonResponseDataProcessor) {
-					((JsonResponseDataProcessor) return_data).processJsonResponse(return_response.data.object);
-				}
-				if (return_data instanceof RawResponseDataProcessor) {
-					((RawResponseDataProcessor) return_data).processRawResponse(return_response.data.raw);
+				ResponseProcessor rp = return_data.getResponseProcessor(return_response);
+				try {
+					rp.process(return_response.data);
+				} catch (Exception e) {
+					return_response.validity = Validity.ProcessError;
+					Log.w(TAG, "Error during ResponseProcessor#process", e);
 				}
 			}
 			
@@ -120,7 +122,7 @@ public class AsyncRequest<Z extends BaseData> {
 		}
 		
 		@Override protected void onCancelled() {
-			return_response = new Response(Validity.Cancelled, "cancelled from asynctask#onCancelled");
+			return_response = new Response(request, Validity.Cancelled, "cancelled from asynctask#onCancelled");
 			onPostExecute(null); //$NON-NLS-1$
 		}
 		
@@ -150,7 +152,7 @@ public class AsyncRequest<Z extends BaseData> {
 		} else {
 			if (response.validity == Validity.IoError) {
 				showErrorToastIfNoRecentErrorToast(App.context, "Network error");
-			} else if (response.validity == Validity.JsonError){
+			} else if (response.validity == Validity.JsonError) {
 				showErrorToastIfNoRecentErrorToast(App.context, "Response from network error");
 			}
 			

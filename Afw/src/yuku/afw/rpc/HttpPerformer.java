@@ -42,7 +42,6 @@ public class HttpPerformer {
 	
 	public Response perform() {
 		String url = request.url;
-		String json_s = null;
 		
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpParams httpParams = client.getParams();
@@ -127,28 +126,15 @@ public class HttpPerformer {
 					if (content != null) content.close();
 				}
 			}
-			
-			if (request.method != Method.GET_RAW) {
-				json_s = os.toString("utf-8"); //$NON-NLS-1$
-			}
 		} catch (IOException e) {
 			Log.d(TAG, "IoError: " + e.getClass().getSimpleName() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-			return new Response(Validity.IoError, e.getClass().getName() + ": " + e.getMessage()); //$NON-NLS-1$
+			return new Response(this.request, Validity.IoError, e.getClass().getName() + ": " + e.getMessage()); //$NON-NLS-1$
 		}
 		
 		if (task != null && task.isCancelled()) {
-			return new Response(Validity.Cancelled, "cancelled"); //$NON-NLS-1$
+			return new Response(this.request, Validity.Cancelled, "cancelled"); //$NON-NLS-1$
 		}
 		
-		if (request.method == Method.GET_RAW) {
-			return new Response(os.toByteArray(), httpResponseCode); // using http status code to give the api error code
-		} else {
-			if (json_s != null) {
-				return new Response(json_s);
-			}
-		}
-		
-		return new Response(Validity.IoError, "no response"); //$NON-NLS-1$
+		return new Response(this.request, os.toByteArray(), httpResponseCode); 
 	}
-
 }
