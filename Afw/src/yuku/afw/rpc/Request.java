@@ -30,21 +30,21 @@ public class Request {
 	}
 	
 	public Method method;
-	public String path;
+	public String url;
 	public Headers headers = new Headers();
 	public Params params = new Params();
 	public Options options;
 	
 	public Request(Method method, String path) {
 		this.method = method;
-		this.path = path;
+		this.url = path;
 	}
 	
 	@Override
 	public String toString() {
 		StringBuilder debugInfo = new StringBuilder(100);
 		debugInfo.append(method.name());
-		debugInfo.append(' ').append(path).append(" params:"); //$NON-NLS-1$
+		debugInfo.append(' ').append(url).append(" params:"); //$NON-NLS-1$
 		params.addDebugString(debugInfo);
 		debugInfo.append(" headers:"); //$NON-NLS-1$
 		headers.addDebugString(debugInfo);

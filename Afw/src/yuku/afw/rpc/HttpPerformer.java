@@ -1,7 +1,5 @@
 package yuku.afw.rpc;
 
-import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -42,8 +40,8 @@ public class HttpPerformer {
 		this.request = request;
 	}
 	
-	public Response perform(Context context) {
-		String url = (Uri.parse(request.path).getScheme() != null)? request.path: ("http://" + S.getHostName() + "/" + (request.path == null? "": request.path)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public Response perform() {
+		String url = request.url;
 		String json_s = null;
 		
 		DefaultHttpClient client = new DefaultHttpClient();

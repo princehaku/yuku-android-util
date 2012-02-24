@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import yuku.afw.App;
 import yuku.afw.D;
 import yuku.afw.rpc.Response.Validity;
 
@@ -53,7 +54,6 @@ public class AsyncRequest<Z extends BaseData> {
 	protected void onApiError(Response response, Z data) {
 	}
 
-	private final Context context;
 	private final Request request;
 	private Z data;
 	private Task<Z> task;
@@ -62,8 +62,7 @@ public class AsyncRequest<Z extends BaseData> {
 	private int id;
 	private boolean consumed;
 	
-	public AsyncRequest(Context context, Request request, Z data) {
-		this.context = context;
+	public AsyncRequest(Request request, Z data) {
 		this.request = request;
 		this.data = data;
 		this.task = new Task<Z>();
@@ -105,10 +104,10 @@ public class AsyncRequest<Z extends BaseData> {
 			HttpPerformer httpPerformer = new HttpPerformer(this, request);
 			if (D.EBUG) Log.d(TAG, "async start [" + id + "] (" + getActiveCount() + " active, total " + Thread.activeCount() + " threads) " + request.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
-			return_response = httpPerformer.perform(context);
+			return_response = httpPerformer.perform();
 			return_data = AsyncRequest.this.data;
 			
-			if (U.isSuccessResponse(return_response)) {
+			if (return_data.isSuccessResponse(return_response)) {
 				if (return_data instanceof JsonResponseDataProcessor) {
 					((JsonResponseDataProcessor) return_data).processJsonResponse(return_response.data.object);
 				}
@@ -146,13 +145,13 @@ public class AsyncRequest<Z extends BaseData> {
 	}
 
 	protected void onReceiveResponse(Response response, Z data) {
-		if (U.isSuccessResponse(response)) {
+		if (data.isSuccessResponse(response)) {
 			onSuccess(response, data);
 		} else {
 			if (response.validity == Validity.IoError) {
-				showErrorToastIfNoRecentErrorToast(context, "Network error");
+				showErrorToastIfNoRecentErrorToast(App.context, "Network error");
 			} else if (response.validity == Validity.JsonError){
-				showErrorToastIfNoRecentErrorToast(context, "Response from network error");
+				showErrorToastIfNoRecentErrorToast(App.context, "Response from network error");
 			}
 			
 			if (response.validity == Validity.Ok) {
