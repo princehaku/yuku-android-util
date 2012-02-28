@@ -95,9 +95,13 @@ public class AsyncRequest<Z extends BaseData> {
 	}
 
 	public class Task<Y> extends AsyncTask<Request, Integer, Void> {
+		final Z return_data; // should be never null
 		Response return_response;
-		Z return_data;
 		Request request;
+		
+		public Task() {
+			return_data = AsyncRequest.this.data;
+		}
 		
 		@Override protected Void doInBackground(Request... params) {
 			request = params[0];
@@ -106,7 +110,6 @@ public class AsyncRequest<Z extends BaseData> {
 			if (D.EBUG) Log.d(TAG, "async start [" + id + "] (" + getActiveCount() + " active, total " + Thread.activeCount() + " threads) " + request.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
 			return_response = httpPerformer.perform();
-			return_data = AsyncRequest.this.data;
 			
 			if (return_data.isSuccessResponse(return_response)) {
 				ResponseProcessor rp = return_data.getResponseProcessor(return_response);
