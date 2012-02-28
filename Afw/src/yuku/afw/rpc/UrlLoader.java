@@ -22,7 +22,7 @@ public class UrlLoader {
 	Map<String, Data> running = new LinkedHashMap<String, Data>(); 
 	
 	public interface Listener {
-		void onResponse(String url, Response response, BaseData data);
+		void onResponse(String url, Response response, BaseData data, boolean firstTime);
 	}
 	
 	/** must call this from main thread */
@@ -44,8 +44,10 @@ public class UrlLoader {
 					long responseTime = SystemClock.uptimeMillis();
 					// call all listeners and remove from map
 					try {
+						boolean firstTime = true;
 						for (int i = 0, len = newData.listeners.size(); i < len; i++) {
-							newData.listeners.get(i).onResponse(url, response, imageData);
+							newData.listeners.get(i).onResponse(url, response, imageData, firstTime);
+							firstTime = false;
 						}
 					} finally {
 						running.remove(url);
