@@ -2,14 +2,16 @@ package com.actionbarsherlock.app;
 
 import static com.actionbarsherlock.app.SherlockFragmentActivity.DEBUG;
 import android.app.Activity;
-import android.support.v4.app.DialogFragment;
+import android.support.v4.app.ListFragment;
 import android.util.Log;
+import com.actionbarsherlock.internal.view.menu.MenuItemMule;
+import com.actionbarsherlock.internal.view.menu.MenuMule;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 
-public class SherlockDialogFragment extends DialogFragment {
-    private static final String TAG = "SherlockFragment";
+public class SherlockListFragment extends ListFragment {
+    private static final String TAG = "SherlockListFragment";
 
     private SherlockFragmentActivity mActivity;
 
@@ -20,7 +22,7 @@ public class SherlockDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         if (!(activity instanceof SherlockFragmentActivity)) {
-            throw new IllegalStateException("SherlockFragment must be attached only to a SherlockFragmenActivity.");
+            throw new IllegalStateException(TAG + " must be attached to a SherlockFragmentActivity.");
         }
         mActivity = (SherlockFragmentActivity)activity;
 

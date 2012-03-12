@@ -17,10 +17,9 @@
 ** limitations under the License.
 */
 -->
-<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android" 
+<TextView xmlns:android="http://schemas.android.com/apk/res/android" 
     android:id="@android:id/text1"
-    style="?android:attr/spinnerDropDownItemStyle"
-    android:textColor="?attr/textColorPrimaryInverse"
+    style="?attr/spinnerDropDownItemStyle"
     android:singleLine="true"
     android:layout_width="match_parent"
     android:layout_height="?attr/dropdownListPreferredItemHeight"
