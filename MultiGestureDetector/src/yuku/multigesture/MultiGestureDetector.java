@@ -146,12 +146,15 @@ public class MultiGestureDetector {
 		public float centerX;
 		public float centerY;
 		public float amount; // in pixels
+		public float scale;
 		public int numberOfPoints;
 
-		PinchEvent(float centerX, float centerY, float amount, int n) {
+		PinchEvent(float centerX, float centerY, float amount, float scale, int n) {
 			this.centerX = centerX;
 			this.centerY = centerY;
 			this.amount = amount;
+			this.scale = scale;
+			this.numberOfPoints = n;
 		}
 	}
 
@@ -277,8 +280,6 @@ public class MultiGestureDetector {
 	class TouchProcessor {
 
 		// heuristic constants
-		long TAP_INTERVAL = 200;
-		long TAP_TIMEOUT = 200;
 		int DOUBLE_TAP_DIST_THRESHOLD = 30;
 		int FLICK_VELOCITY_THRESHOLD = 20;
 		float MAX_MULTI_DRAG_DISTANCE = 100; // from the centroid
@@ -352,10 +353,8 @@ public class MultiGestureDetector {
 					FlickEvent event = new FlickEvent(p.px, p.py, new PointF(p.x - p.px, p.y - p.py));
 					events.add(event);
 				} else {
-					long interval = System.currentTimeMillis() - tap;
-					if (interval < TAP_INTERVAL) {
-						tapCount++;
-					}
+					// long interval = System.currentTimeMillis() - tap;
+					tapCount++;
 				}
 			}
 			pointsChanged = true;
@@ -393,9 +392,18 @@ public class MultiGestureDetector {
 			// this gets rid of a lot of jittery events
 			if (pointsChanged) {
 				updateCentroid();
-				if (handleDrag() == false) {
-					handleRotation();
-					handlePinch();
+				if (handleDrag()) {
+					// we have handled drag, reset tap/doubletap
+					firstTap = secondTap = null;
+					tapCount = 0;
+				} else {
+					boolean ret1 = handleRotation();
+					boolean ret2 = handlePinch();
+					if (ret1 || ret2) {
+						// we have handled rotation or pinch, reset tap/doubletap
+						firstTap = secondTap = null;
+						tapCount = 0;
+					}
 				}
 				pointsChanged = false;
 			}
@@ -426,8 +434,8 @@ public class MultiGestureDetector {
 				float d = dist(firstTap.x, firstTap.y, secondTap.x, secondTap.y);
 				if (d > DOUBLE_TAP_DIST_THRESHOLD) {
 					// if the two taps are apart, count them as two single taps
-					TapEvent event1 = new TapEvent(firstTap.x, firstTap.y, TapEvent.SINGLE);
-					onTap(event1);
+//					TapEvent event1 = new TapEvent(firstTap.x, firstTap.y, TapEvent.SINGLE);
+//					onTap(event1);
 					TapEvent event2 = new TapEvent(secondTap.x, secondTap.y, TapEvent.SINGLE);
 					onTap(event2);
 				} else {
@@ -435,18 +443,18 @@ public class MultiGestureDetector {
 				}
 				tapCount = 0;
 			} else if (tapCount == 1) {
-				long interval = System.currentTimeMillis() - tap;
-				if (interval > TAP_TIMEOUT) {
+//				long interval = System.currentTimeMillis() - tap;
+//				if (interval > TAP_TIMEOUT) {
 					events.add(new TapEvent(firstTap.x, firstTap.y, TapEvent.SINGLE));
-					tapCount = 0;
-				}
+//					tapCount = 0;
+//				}
 			}
 		}
 
 		// -------------------------------------------------------------------------------------
 		// rotation is the average angle change between each point and the centroid
-		public void handleRotation() {
-			if (touchPoints.size() < 2) return;
+		public boolean handleRotation() {
+			if (touchPoints.size() < 2) return false;
 			// look for rotation events
 			float rotation = 0;
 			for (int i = 0; i < touchPoints.size(); i++) {
@@ -459,24 +467,36 @@ public class MultiGestureDetector {
 				rotation += delta;
 			}
 			rotation /= touchPoints.size();
-			if (rotation != 0) events.add(new RotateEvent(cx, cy, rotation, touchPoints.size()));
+			if (rotation != 0) {
+				events.add(new RotateEvent(cx, cy, rotation, touchPoints.size()));
+				return true;
+			}
+			return false;
 		}
 
 		// -------------------------------------------------------------------------------------
 		// pinch is simply the average distance change from each points to the centroid
-		public void handlePinch() {
-			if (touchPoints.size() < 2) return;
+		public boolean handlePinch() {
+			int ntouches = touchPoints.size();
+			if (ntouches < 2) return false;
 			// look for pinch events
 			float pinch = 0;
-			for (int i = 0; i < touchPoints.size(); i++) {
-				TouchPoint p = (TouchPoint) touchPoints.get(i);
+			float scalediff = 0.f;
+			for (int i = 0; i < ntouches; i++) {
+				TouchPoint p = touchPoints.get(i);
 				float distance = dist(p.x, p.y, cx, cy);
 				p.setPinch(distance);
 				float delta = p.pinch - p.oldPinch;
 				pinch += delta;
+				scalediff += delta / distance;
 			}
-			pinch /= touchPoints.size();
-			if (pinch != 0) events.add(new PinchEvent(cx, cy, pinch, touchPoints.size()));
+			pinch /= ntouches;
+			scalediff /= ntouches;
+			if (pinch != 0) {
+				events.add(new PinchEvent(cx, cy, pinch, 1.f + scalediff, ntouches));
+				return true;
+			}
+			return false;
 		}
 
 		// -------------------------------------------------------------------------------------
