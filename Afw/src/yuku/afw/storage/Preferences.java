@@ -1,7 +1,8 @@
 package yuku.afw.storage;
 
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -10,154 +11,169 @@ import java.util.Map;
 import java.util.Set;
 
 import yuku.afw.App;
+import yuku.afw.D;
 
 public class Preferences {
 	private static final String TAG = Preferences.class.getSimpleName();
 	
 	private static SharedPreferences cache;
 	private static boolean dirty = true;
+	private static Editor currentEditor;
+	private static int held = 0;
 	
 	public static void invalidate() {
 		dirty = true;
 	}
 	
+	private static Editor getEditor(SharedPreferences pref) {
+		if (currentEditor == null) {
+			currentEditor = pref.edit();
+		}
+		return currentEditor;
+	}
+	
 	public static int getInt(Enum<?> key, int def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getInt(key.toString(), def);
+		return getInt(key.toString(), def);
+	}
+	
+	public static int getInt(String key, int def) {
+		SharedPreferences pref = read();
+		return pref.getInt(key, def);
 	}
 	
 	public static float getFloat(Enum<?> key, float def) {
-		SharedPreferences pref = read(App.context);
+		SharedPreferences pref = read();
 		return pref.getFloat(key.toString(), def);
 	}
 	
 	public static long getLong(Enum<?> key, long def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getLong(key.toString(), def);
+		return getLong(key.toString(), def);
 	}
 	
 	public static long getLong(String key, long def) {
-		SharedPreferences pref = read(App.context);
+		SharedPreferences pref = read();
 		return pref.getLong(key, def);
 	}
 	
 	public static String getString(Enum<?> key, String def) {
-		SharedPreferences pref = read(App.context);
+		SharedPreferences pref = read();
 		return pref.getString(key.toString(), def);
 	}
 	
 	public static boolean getBoolean(Enum<?> key, boolean def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getBoolean(key.toString(), def);
+		return getBoolean(key.toString(), def);
 	}
 	
 	public static boolean getBoolean(String key, boolean def) {
-		SharedPreferences pref = read(App.context);
+		SharedPreferences pref = read();
 		return pref.getBoolean(key, def);
 	}
 	
-	public static int getInt(int keyResId, int defResId) {
-		SharedPreferences pref = read(App.context);
-		return pref.getInt(App.context.getString(keyResId), App.context.getResources().getInteger(defResId));
+	public static Map<String, ?> getAll() {
+		SharedPreferences pref = read();
+		return pref.getAll();
 	}
-	
-	public static int getInt(String key, int def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getInt(key, def);
+
+	public static Set<String> getAllKeys() {
+		return new HashSet<String>(getAll().keySet());
 	}
-	
-	public static float getFloat(int keyResId, float def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getFloat(App.context.getString(keyResId), def);
-	}
-	
-	public static String getString(int keyResId, int defResId) {
-		SharedPreferences pref = read(App.context);
-		return pref.getString(App.context.getString(keyResId), App.context.getString(defResId));
-	}
-	
-	public static String getString(int keyResId, String def) {
-		SharedPreferences pref = read(App.context);
-		return pref.getString(App.context.getString(keyResId), def);
-	}
-	
-	public static boolean getBoolean(int keyResId, int defResId) {
-		SharedPreferences pref = read(App.context);
-		return pref.getBoolean(App.context.getString(keyResId), App.context.getResources().getBoolean(defResId));
-	}
-	
 	
 	public static void setInt(Enum<?> key, int val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putInt(key.toString(), val).commit();
-		Log.d(TAG, key + " = (int) " + val); //$NON-NLS-1$
+		setInt(key.toString(), val);
 	}
 	
 	public static void setInt(String key, int val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putInt(key, val).commit();
+		SharedPreferences pref = read();
+		getEditor(pref).putInt(key, val);
+		commitIfNotHeld();
 		Log.d(TAG, key + " = (int) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setLong(Enum<?> key, long val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putLong(key.toString(), val).commit();
-		Log.d(TAG, key + " = (long) " + val); //$NON-NLS-1$
+		setLong(key.toString(), val);
 	}
 	
 	public static void setLong(String key, long val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putLong(key, val).commit();
+		SharedPreferences pref = read();
+		getEditor(pref).putLong(key, val);
+		commitIfNotHeld();
 		Log.d(TAG, key + " = (long) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setString(Enum<?> key, String val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putString(key.toString(), val).commit();
+		setString(key.toString(), val);
+	}
+	
+	public static void setString(String key, String val) {
+		SharedPreferences pref = read();
+		getEditor(pref).putString(key, val);
+		commitIfNotHeld();
 		Log.d(TAG, key + " = (string) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setBoolean(Enum<?> key, boolean val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putBoolean(key.toString(), val).commit();
-		Log.d(TAG, key + " = (bool) " + val); //$NON-NLS-1$
+		setBoolean(key.toString(), val);
 	}
 	
 	public static void setBoolean(String key, boolean val) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().putBoolean(key, val).commit();
+		SharedPreferences pref = read();
+		getEditor(pref).putBoolean(key, val);
+		commitIfNotHeld();
 		Log.d(TAG, key + " = (bool) " + val); //$NON-NLS-1$
 	}
 	
 	public static void remove(Enum<?> key) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().remove(key.toString()).commit();
-		Log.d(TAG, key + " removed"); //$NON-NLS-1$
+		remove(key.toString());
 	}
 	
 	public static void remove(String key) {
-		SharedPreferences pref = read(App.context);
-		pref.edit().remove(key).commit();
+		SharedPreferences pref = read();
+		getEditor(pref).remove(key.toString());
+		commitIfNotHeld();
 		Log.d(TAG, key + " removed"); //$NON-NLS-1$
 	}
 	
-	private static SharedPreferences read(Context context) {
+	private synchronized static void commitIfNotHeld() {
+		if (held > 0) {
+			// don't do anything now
+		} else {
+			if (currentEditor != null) {
+				currentEditor.commit();
+				currentEditor = null;
+			}
+		}
+	}
+	
+	public synchronized static void hold() {
+		held++;
+	}
+	
+	public synchronized static void unhold() {
+		if (held <= 0) {
+			throw new RuntimeException("unhold called too many times");
+		}
+		held--;
+		if (held == 0) {
+			if (currentEditor != null) {
+				currentEditor.commit();
+				currentEditor = null;
+			}
+		}
+	}
+
+	private synchronized static SharedPreferences read() {
 		SharedPreferences res;
 		if (dirty || cache == null) {
-			Log.d(TAG, "Preferences are read from disk"); //$NON-NLS-1$
+			long start = 0;
+			if (D.EBUG) start = SystemClock.uptimeMillis();
 			res = PreferenceManager.getDefaultSharedPreferences(App.context);
+			if (D.EBUG) Log.d(TAG, "Preferences was read from disk in ms: " + (SystemClock.uptimeMillis() - start)); //$NON-NLS-1$
 			dirty = false;
 			cache = res;
 		} else {
 			res = cache;
 		}
-		
-		return res;
-	}
 
-	public static Set<String> getAllKeys() {
-		SharedPreferences pref = read(App.context);
-		Map<String, ?> all = pref.getAll();
-		return new HashSet<String>(all.keySet());
+		return res;
 	}
 }
