@@ -39,7 +39,15 @@ public class EasyBilling {
 	private static WeakHashMap<EasyBillingListener, Object> listeners = new WeakHashMap<EasyBillingListener, Object>();
 	private static final Object DUMMY = new Object();
 	
+	public interface OnBillingInitListener {
+		void onBillingInitFinished();
+	}
+	
 	public static void init(Context appContext, String base64Key) {
+		init(appContext, base64Key, null);
+	}
+	
+	public static void init(Context appContext, String base64Key, final OnBillingInitListener listener) {
 		EasyBilling.appContext = appContext;
 		EasyBilling.base64Key = base64Key;
 		
@@ -50,6 +58,10 @@ public class EasyBilling {
 			@Override public void onBillingResult(BillingRequestStatus status, CheckBillingSupportedResult result) {
 				Log.d(TAG, "CheckBillingSupportedResult result: " + result.responseCode);
 				checkBillingSupportedResult = result.responseCode;
+				
+				if (listener != null) {
+					listener.onBillingInitFinished();
+				}
 			}
 		});
 	}
