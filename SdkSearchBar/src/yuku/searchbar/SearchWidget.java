@@ -108,6 +108,19 @@ public class SearchWidget extends FrameLayout {
 			this.addView(searchBar, lp);
 		}
 	}
+	
+    /**
+     * Enables showing a submit button when the query is non-empty. In cases where the SearchView
+     * is being used to filter the contents of the current activity and doesn't launch a separate
+     * results activity, then the submit button should be disabled.
+     *
+     * @param enabled true to show a submit button for submitting queries, false if a submit
+     * button is not required.
+     */
+	public void setSubmitButtonEnabled(boolean enabled) {
+		if (searchView != null) searchView.setSubmitButtonEnabled(enabled);
+		// TODO for searchBar
+	}
 
 	public void setOnQueryTextListener(OnQueryTextListener listener) {
 		this.listener = listener;
