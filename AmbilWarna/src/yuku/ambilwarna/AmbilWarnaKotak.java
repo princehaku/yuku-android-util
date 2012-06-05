@@ -1,10 +1,17 @@
 package yuku.ambilwarna;
 
-import android.content.*;
-import android.graphics.*;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ComposeShader;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.Shader;
 import android.graphics.Shader.TileMode;
-import android.util.*;
-import android.view.*;
+import android.util.AttributeSet;
+import android.view.View;
 
 public class AmbilWarnaKotak extends View {
 	Paint paint;
@@ -19,7 +26,7 @@ public class AmbilWarnaKotak extends View {
 		super(context, attrs, defStyle);
 	}
 
-	@Override protected void onDraw(Canvas canvas) {
+	@SuppressLint("DrawAllocation") @Override protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		if (paint == null) {
 			paint = new Paint();
