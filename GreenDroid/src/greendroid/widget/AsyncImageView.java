@@ -236,6 +236,8 @@ public class AsyncImageView extends ImageView implements ImageRequestCallback {
 
             if (mBitmap != null) {
                 setImageBitmap(mBitmap);
+                // yuku: also call this when image is loaded from cache
+                onImageRequestEnded(mRequest, mBitmap);
                 return;
             }
 
@@ -283,6 +285,8 @@ public class AsyncImageView extends ImageView implements ImageRequestCallback {
 
         // Check the url has changed
         if (mBitmap != null && url != null && url.equals(mUrl)) {
+            // yuku: also call this when image is already loaded
+        	onImageRequestEnded(mRequest, mBitmap);
             return;
         }
 
