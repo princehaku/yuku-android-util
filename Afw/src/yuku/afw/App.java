@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+// This is a temp comment just to make a commit possible
 public class App extends Application {
 	public static final String TAG = App.class.getSimpleName();
 
