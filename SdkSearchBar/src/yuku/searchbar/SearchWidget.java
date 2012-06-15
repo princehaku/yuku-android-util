@@ -125,4 +125,22 @@ public class SearchWidget extends FrameLayout {
 	public void setOnQueryTextListener(OnQueryTextListener listener) {
 		this.listener = listener;
 	}
+	
+	public void setHint(CharSequence hint) {
+		if (searchView != null) searchView.setQueryHint(hint);
+		else searchBar.getSearchField().setHint(hint);
+	}
+	
+	public void setHint(int resId) {
+		setHint(getContext().getText(resId));
+	}
+	
+	public void setText(CharSequence text) {
+		if (searchView != null) searchView.setQuery(text, false);
+		else searchBar.getSearchField().setText(text);
+	}
+
+	public void setText(int resId) {
+		setText(getContext().getText(resId));
+	}
 }
