@@ -10,8 +10,15 @@ import yuku.afw.App;
 public abstract class InternalDbHelper extends SQLiteOpenHelper {
 	public static final String TAG = InternalDbHelper.class.getSimpleName();
 
-	public InternalDbHelper() {
-		super(App.context, "InternalDb", null, App.getVersionCode()); //$NON-NLS-1$
+	/**
+	 * @deprecated Use {@link InternalDbHelper#InternalDbHelper(String)} instead to allow multiple databases in one app.
+	 */
+	@Deprecated public InternalDbHelper() {
+		this("InternalDb"); //$NON-NLS-1$
+	}
+	
+	public InternalDbHelper(String name) {
+		super(App.context, name, null, App.getVersionCode());
 	}
 
 	@Override public void onOpen(SQLiteDatabase db) {
