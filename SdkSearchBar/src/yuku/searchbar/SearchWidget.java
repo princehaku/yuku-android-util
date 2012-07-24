@@ -11,7 +11,7 @@ import android.widget.SearchView;
 
 import yuku.androidsdk.searchbar.SearchBar;
 
-public class SearchWidget extends FrameLayout {
+@TargetApi(11) public class SearchWidget extends FrameLayout {
 	public static final String TAG = SearchWidget.class.getSimpleName();
 
 	public interface OnQueryTextListener {
@@ -121,6 +121,14 @@ public class SearchWidget extends FrameLayout {
 		if (searchView != null) searchView.setSubmitButtonEnabled(enabled);
 		// TODO for searchBar
 	}
+	
+	public SearchBar getSearchBarIfUsed() {
+		return searchBar;
+	}
+	
+	public SearchView getSearchViewIfUsed() {
+		return searchView;
+	}
 
 	public void setOnQueryTextListener(OnQueryTextListener listener) {
 		this.listener = listener;
@@ -142,5 +150,10 @@ public class SearchWidget extends FrameLayout {
 
 	public void setText(int resId) {
 		setText(getContext().getText(resId));
+	}
+	
+	public CharSequence getText() {
+		if (searchView != null) return searchView.getQuery();
+		return searchBar.getText();
 	}
 }
