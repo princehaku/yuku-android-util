@@ -46,6 +46,11 @@ public class Preferences {
 		return pref.getFloat(key.toString(), def);
 	}
 	
+	public static float getFloat(String key, float def) {
+		SharedPreferences pref = read();
+		return pref.getFloat(key, def);
+	}
+	
 	public static long getLong(Enum<?> key, long def) {
 		return getLong(key.toString(), def);
 	}
@@ -58,6 +63,21 @@ public class Preferences {
 	public static String getString(Enum<?> key, String def) {
 		SharedPreferences pref = read();
 		return pref.getString(key.toString(), def);
+	}
+	
+	public static String getString(String key, String def) {
+		SharedPreferences pref = read();
+		return pref.getString(key, def);
+	}
+	
+	public static String getString(Enum<?> key) {
+		SharedPreferences pref = read();
+		return pref.getString(key.toString(), null);
+	}
+	
+	public static String getString(String key) {
+		SharedPreferences pref = read();
+		return pref.getString(key, null);
 	}
 	
 	public static boolean getBoolean(Enum<?> key, boolean def) {
@@ -87,6 +107,17 @@ public class Preferences {
 		getEditor(pref).putInt(key, val);
 		commitIfNotHeld();
 		Log.d(TAG, key + " = (int) " + val); //$NON-NLS-1$
+	}
+	
+	public static void setFloat(Enum<?> key, float val) {
+		setFloat(key.toString(), val);
+	}
+	
+	public static void setFloat(String key, float val) {
+		SharedPreferences pref = read();
+		getEditor(pref).putFloat(key, val);
+		commitIfNotHeld();
+		Log.d(TAG, key + " = (float) " + val); //$NON-NLS-1$
 	}
 	
 	public static void setLong(Enum<?> key, long val) {
