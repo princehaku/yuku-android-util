@@ -10,6 +10,7 @@ public class FolderChooserConfig implements Parcelable {
 	public static final String TAG = FolderChooserConfig.class.getSimpleName();
 
 	public String title;
+	public String subtitle;
 	public List<String> roots;
 	public boolean showHidden;
 	public boolean mustBeWritable;
@@ -22,6 +23,7 @@ public class FolderChooserConfig implements Parcelable {
 
 	@Override public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(title);
+		dest.writeString(subtitle);
 		dest.writeStringList(roots);
 		dest.writeByte((byte) (showHidden? 1: 0));
 		dest.writeByte((byte) (mustBeWritable? 1: 0));
@@ -37,6 +39,7 @@ public class FolderChooserConfig implements Parcelable {
 		@Override public FolderChooserConfig createFromParcel(Parcel in) {
 			FolderChooserConfig res = new FolderChooserConfig();
 			res.title = in.readString();
+			res.subtitle = in.readString();
 			res.roots = new ArrayList<String>(); in.readStringList(res.roots);
 			res.showHidden = in.readByte() != 0;
 			res.mustBeWritable = in.readByte() != 0;

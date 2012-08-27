@@ -1,6 +1,7 @@
 package yuku.filechooser;
 
-import android.os.*;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class FileChooserConfig implements Parcelable {
 	public static final String TAG = FileChooserConfig.class.getSimpleName();
@@ -13,6 +14,7 @@ public class FileChooserConfig implements Parcelable {
 	public Mode mode;
 	public String pattern;
 	public String title;
+	public String subtitle;
 	public String initialDir;
 	
 	@Override
@@ -25,6 +27,7 @@ public class FileChooserConfig implements Parcelable {
 		dest.writeInt(mode.ordinal());
 		dest.writeString(pattern);
 		dest.writeString(title);
+		dest.writeString(subtitle);
 		dest.writeString(initialDir);
 	}
 	
@@ -40,6 +43,7 @@ public class FileChooserConfig implements Parcelable {
 			int mode_i = in.readInt(); if (mode_i >= 0 || mode_i < Mode.values().length) res.mode = Mode.values()[mode_i]; else res.mode = Mode.Open;
 			res.pattern = in.readString();
 			res.title = in.readString();
+			res.subtitle = in.readString();
 			res.initialDir = in.readString();
 			return res;
 		}

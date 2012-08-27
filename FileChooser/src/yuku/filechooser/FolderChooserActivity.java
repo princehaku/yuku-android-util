@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -62,11 +61,7 @@ public class FolderChooserActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		config = getIntent().getParcelableExtra(EXTRA_config);
 
-		if (config.title == null) {
-			requestWindowFeature(Window.FEATURE_NO_TITLE);
-		} else {
-			setTitle(config.title);
-		}
+		Utils.configureTitles(this, config.title, config.subtitle);
 
 		setContentView(R.layout.filechooser_activity_folderchooser);
 

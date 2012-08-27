@@ -30,12 +30,14 @@ public class FileChooserDemoActivity extends Activity {
 	public void bShowFileChooser_click(View v) {
 		EditText tInitialDir = (EditText) findViewById(R.id.tInitialDir);
 		EditText tTitle = (EditText) findViewById(R.id.tTitle);
+		EditText tSubtitle = (EditText) findViewById(R.id.tSubtitle);
 		EditText tPattern = (EditText) findViewById(R.id.tPattern);
 
 		FileChooserConfig config = new FileChooserConfig();
 		config.mode = Mode.Open;
 		config.initialDir = tInitialDir.length() == 0 ? null : tInitialDir.getText().toString();
 		config.title = tTitle.length() == 0 ? null : tTitle.getText().toString();
+		config.subtitle = tSubtitle.length() == 0 ? null : tSubtitle.getText().toString();
 		config.pattern = tPattern.length() == 0 ? null : tPattern.getText().toString();
 
 		startActivityForResult(FileChooserActivity.createIntent(getApplicationContext(), config), REQCODE_showFileChooser);
@@ -45,6 +47,7 @@ public class FileChooserDemoActivity extends Activity {
 		EditText tInitialDir = (EditText) findViewById(R.id.tInitialDir);
 		EditText tInitialDir2 = (EditText) findViewById(R.id.tInitialDir2);
 		EditText tTitle = (EditText) findViewById(R.id.tTitle);
+		EditText tSubtitle = (EditText) findViewById(R.id.tSubtitle);
 		CheckBox cShowHidden = (CheckBox) findViewById(R.id.cShowHidden);
 		CheckBox cMustBeWritable = (CheckBox) findViewById(R.id.cMustBeWritable);
 		CheckBox cExpandSingle = (CheckBox) findViewById(R.id.cExpandSingle);
@@ -62,6 +65,7 @@ public class FileChooserDemoActivity extends Activity {
 		config.roots = roots;
 		config.showHidden = cShowHidden.isChecked();
 		config.title = tTitle.length() == 0 ? null : tTitle.getText().toString();
+		config.subtitle = tSubtitle.length() == 0 ? null : tSubtitle.getText().toString();
 		config.mustBeWritable = cMustBeWritable.isChecked();
 		config.expandSingularRoot = cExpandSingle.isChecked();
 		config.expandMultipleRoots = cExpandMultiple.isChecked();

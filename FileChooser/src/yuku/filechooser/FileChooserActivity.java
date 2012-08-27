@@ -1,15 +1,25 @@
 package yuku.filechooser;
 
-import android.app.*;
-import android.content.*;
-import android.os.*;
-import android.view.*;
-import android.widget.*;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Environment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FileChooserActivity extends Activity {
 	static final String EXTRA_config = "config"; //$NON-NLS-1$
@@ -38,12 +48,8 @@ public class FileChooserActivity extends Activity {
         super.onCreate(savedInstanceState);
         config = getIntent().getParcelableExtra(EXTRA_config);
         
-        if (config.title == null) {
-        	requestWindowFeature(Window.FEATURE_NO_TITLE);
-        } else {
-        	setTitle(config.title);
-        }
-        
+		Utils.configureTitles(this, config.title, config.subtitle);
+
         setContentView(R.layout.filechooser_activity_filechooser);
         
         lsFile = (ListView) findViewById(R.id.filechooser_lsFile);
