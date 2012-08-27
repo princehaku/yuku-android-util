@@ -99,6 +99,18 @@ public class FolderChooserActivity extends Activity {
 		adapter.setRootVisible(false);
 		root.setExpanded(true);
 		
+		if (children.length == 1 && config.expandSingularRoot) {
+			FileTreeNode childNode = root.getChildAt(0);
+			childNode.setExpanded(true);
+		}
+		
+		if (children.length > 1 && config.expandMultipleRoots) {
+			for (int i = 0, len = root.getChildCount(); i < len; i++) {
+				FileTreeNode childNode = root.getChildAt(i);
+				childNode.setExpanded(true);
+			}
+		}
+		
 		adapter.setRoot(root);
 	}
 

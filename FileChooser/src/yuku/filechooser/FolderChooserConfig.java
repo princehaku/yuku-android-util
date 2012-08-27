@@ -13,6 +13,8 @@ public class FolderChooserConfig implements Parcelable {
 	public List<String> roots;
 	public boolean showHidden;
 	public boolean mustBeWritable;
+	public boolean expandSingularRoot;
+	public boolean expandMultipleRoots;
 
 	@Override public int describeContents() {
 		return 0;
@@ -23,6 +25,8 @@ public class FolderChooserConfig implements Parcelable {
 		dest.writeStringList(roots);
 		dest.writeByte((byte) (showHidden? 1: 0));
 		dest.writeByte((byte) (mustBeWritable? 1: 0));
+		dest.writeByte((byte) (expandSingularRoot? 1: 0));
+		dest.writeByte((byte) (expandMultipleRoots? 1: 0));
 	}
 
 	public static final Parcelable.Creator<FolderChooserConfig> CREATOR = new Parcelable.Creator<FolderChooserConfig>() {
@@ -36,6 +40,8 @@ public class FolderChooserConfig implements Parcelable {
 			res.roots = new ArrayList<String>(); in.readStringList(res.roots);
 			res.showHidden = in.readByte() != 0;
 			res.mustBeWritable = in.readByte() != 0;
+			res.expandSingularRoot = in.readByte() != 0;
+			res.expandMultipleRoots = in.readByte() != 0;
 			return res;
 		}
 	};

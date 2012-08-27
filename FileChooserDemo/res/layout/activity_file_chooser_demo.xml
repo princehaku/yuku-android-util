@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Initial Dir" />
+
+        <EditText
+            android:id="@+id/tInitialDir"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="/sdcard/download" >
+
+            <requestFocus />
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Initial Dir 2 (optional, for folder)" />
+
+        <EditText
+            android:id="@+id/tInitialDir2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="/sdcard/Android" >
+        </EditText>
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pattern (for file)" />
+
+        <EditText
+            android:id="@+id/tPattern"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text=".*\\.(?i:txt|jpg|doc)" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Title" />
+
+        <EditText
+            android:id="@+id/tTitle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose a picture or a document" />
+
+        <CheckBox
+            android:id="@+id/cShowHidden"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show Hidden" />
+
+        <CheckBox
+            android:id="@+id/cMustBeWritable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Must be Writable (for folder)" />
+
+        <CheckBox
+            android:id="@+id/cExpandSingle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expand Single Root (for folder)" />
+
+        <CheckBox
+            android:id="@+id/cExpandMultiple"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Expand Multiple Roots (for folder)" />
+
+        <Button
+            android:id="@+id/bShowFileChooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="bShowFileChooser_click"
+            android:text="Show File Chooser" />
+
+        <Button
+            android:id="@+id/bShowFolderChooser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="bShowFolderChooser_click"
+            android:text="Show Folder Chooser" />
+    </LinearLayout>
+
+</ScrollView>
