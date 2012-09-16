@@ -89,6 +89,11 @@ public class Preferences {
 		return pref.getBoolean(key, def);
 	}
 	
+	public static Object get(String key) {
+		SharedPreferences pref = read();
+		return pref.getAll().get(key);
+	}
+	
 	public static Map<String, ?> getAll() {
 		SharedPreferences pref = read();
 		return pref.getAll();
