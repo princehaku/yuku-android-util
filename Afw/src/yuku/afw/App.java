@@ -5,19 +5,30 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
-// This is a temp comment just to make a commit possible
 public class App extends Application {
 	public static final String TAG = App.class.getSimpleName();
 
+	private static boolean initted = false;
+	private static PackageInfo packageInfo;
+	
 	public static Context context;
 	
 	@Override public void onCreate() {
 		super.onCreate();
-
-		context = getApplicationContext();
+		
+		initWithAppContext(getApplicationContext());
 	}
 
-	private static PackageInfo packageInfo;
+	public static void initWithAppContext(Context applicationContext) {
+		if (initted) return;
+		
+		if (applicationContext == null) {
+			throw new RuntimeException("Application context can't be null");
+		}
+		
+		initted = true;
+		context = applicationContext;
+	}
 	
 	private static void initPackageInfo() {
 		if (packageInfo == null) {
