@@ -1,6 +1,8 @@
 package yuku.bintex;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class BintexReader {
 	private final InputStream is_;
@@ -112,6 +114,12 @@ public class BintexReader {
 	public int readUint8() throws IOException {
 		int res = is_.read();
 		pos_++;
+		return res;
+	}
+	
+	public int readUint16() throws IOException {
+		int res = (is_.read() << 8) | (is_.read());
+		pos_ += 2;
 		return res;
 	}
 	

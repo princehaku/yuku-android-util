@@ -1,6 +1,7 @@
 package yuku.bintex;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 public class BintexWriter {
 	private final OutputStream os_;
@@ -110,6 +111,17 @@ public class BintexWriter {
 		os_.write(a);
 		
 		pos += 1;
+	}
+	
+	public void writeUint16(int a) throws IOException {
+		if (a < 0 || a > 0xffff) {
+			throw new IllegalArgumentException("uint16 must be 0 to 65535"); //$NON-NLS-1$
+		}
+		
+		os_.write((a & 0x0000ff00) >> 8);
+		os_.write((a & 0x000000ff) >> 0);
+		
+		pos += 2;
 	}
 	
 	public void writeFloat(float f) throws IOException {
