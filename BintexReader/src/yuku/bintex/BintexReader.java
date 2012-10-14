@@ -127,6 +127,32 @@ public class BintexReader {
 		int a = (is_.read() << 24) | (is_.read() << 16) | (is_.read() << 8) | (is_.read());
 		return Float.intBitsToFloat(a);
 	}
+
+	public int readRaw(byte[] buf) throws IOException {
+		return readRaw(buf, 0, buf.length);
+	}
+	
+	public int readRaw(byte[] buf, int off, int len) throws IOException {
+		int total = 0;
+		int _off = off;
+		int _len = len;
+		
+		while (true) {
+			int read = is_.read(buf, _off, _len);
+			if (read < 0) {
+				if (total == 0) total = -1;
+				break;
+			}
+			total += read;
+			if (total >= len) {
+				break;
+			}
+			_off += read;
+			_len -= read;
+		}
+
+		return total;
+	}
 	
 	public long skip(long n) throws IOException {
 		long res = is_.skip(n);
