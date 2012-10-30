@@ -36,7 +36,7 @@ import yuku.atree.nodes.BaseFileTreeNode;
 
 public class FolderChooserActivity extends Activity {
 	static final String EXTRA_config = "config"; //$NON-NLS-1$
-	static final String EXTRA_result = null;
+	static final String EXTRA_result = "result"; //$NON-NLS-1$
 
 	public static Intent createIntent(Context context, FolderChooserConfig config) {
 		Intent res = new Intent(context, FolderChooserActivity.class);
@@ -131,7 +131,7 @@ public class FolderChooserActivity extends Activity {
 					final Button[] bOk = {null};
 					
 					final EditText tFolderName = new EditText(FolderChooserActivity.this);
-					MarginLayoutParams lp = new MarginLayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+					MarginLayoutParams lp = new MarginLayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 					lp.leftMargin = lp.topMargin = lp.rightMargin = lp.bottomMargin = (int) (6 * getResources().getDisplayMetrics().density);
 					tFolderName.setLayoutParams(lp);
 					tFolderName.setHint("Folder name");

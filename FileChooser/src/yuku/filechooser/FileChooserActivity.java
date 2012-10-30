@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class FileChooserActivity extends Activity {
 	static final String EXTRA_config = "config"; //$NON-NLS-1$
-	static final String EXTRA_result = null;
+	static final String EXTRA_result = "result"; //$NON-NLS-1$
 
 	public static Intent createIntent(Context context, FileChooserConfig config) {
 		Intent res = new Intent(context, FileChooserActivity.class);
