@@ -217,7 +217,7 @@ public class PengirimFidbek {
 		return Build.DEVICE;
 	}
 
-	String getUniqueId() {
+	public String getUniqueId() {
 		String uniqueId = offlineBuffer_.getString("fidbek_uniqueId", null); //$NON-NLS-1$
 		if (uniqueId == null) {
 			uniqueId = "u2:" + UUID.randomUUID().toString(); //$NON-NLS-1$
