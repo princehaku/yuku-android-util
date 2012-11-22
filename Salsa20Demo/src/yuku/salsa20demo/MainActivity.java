@@ -10,6 +10,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import org.bouncycastle.crypto.StreamCipher;
@@ -31,6 +33,7 @@ public class MainActivity extends Activity {
 	byte[] key2 = "key1key2key3key4".getBytes();
 	byte[] nonce1 = {0, 0, 0, 0, 0, 0, 0, 0, };
 	byte[] nonce2 = {1, 2, 3, 4, 5, (byte) 0xdd, (byte) 0xee, (byte) 0xff };
+	String m0 = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 	String m1 = "________________________________________________________________________________________________________";
 	String m2 = "Salsa20 is a family of 256-bit stream ciphers designed in 2005 " + 
 			"and submitted to eSTREAM, the ECRYPT Stream Cipher Project. " + 
@@ -50,7 +53,7 @@ public class MainActivity extends Activity {
 	void test1(byte[] key, byte[] nonce, String m_) {
 		Log.d(TAG, "##################  test  ###################");
 		
-		Salsa20 s = new Salsa20(key, nonce);
+		Salsa20 s = new Salsa20.Factory().newInstance(key, nonce);
 		byte[] m1 = m_.getBytes();
 		byte[] c = new byte[m1.length];
 		s.crypt(m1, 0, c, 0, m1.length);
@@ -102,7 +105,7 @@ public class MainActivity extends Activity {
 	}
 	
 	void test2() {
-		Salsa20 s = new Salsa20(key2, nonce2);
+		Salsa20 s = new Salsa20.Factory().newInstance(key2, nonce2);
 		
 		byte[] m = {0};
 		byte[] c = {0};
@@ -127,7 +130,7 @@ public class MainActivity extends Activity {
 	void test3(int n, int rounds) {
 		Log.d(TAG, "##################  performance test  ###################");
 
-		Salsa20 s = new Salsa20(key2, nonce2, rounds);
+		Salsa20 s = new Salsa20.Factory().newInstance(key2, nonce2, rounds);
 		
 		byte[] m = new byte[3999 * n];
 		for (int i = 0; i < m.length; i++) {
@@ -232,9 +235,64 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	/** compare 3 different implementations */
+	void test5(int n, int rounds) {
+		Log.d(TAG, "##################  implementation comparison test  ###################");
+
+		Salsa20 s1 = new Salsa20.Factory().newInstanceJava(key2, nonce2, rounds);
+		Salsa20 s2 = new Salsa20.Factory().newInstanceNative(key2, nonce2, rounds);
+		Salsa20Engine s3 = new Salsa20Engine();
+        s3.init(true, new ParametersWithIV(new KeyParameter(key2), nonce2));
+		
+        MessageDigest md;
+		try {
+			md = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(e);
+		}
+        
+        byte[] m = new byte[4999 * n];
+        byte[] c = new byte[m.length];
+        
+		for (int i = 0; i < m.length; i++) {
+			m[i] = (byte) ((i+3) & 0xff);
+		}
+		
+		/// benchmark start
+		{
+			long time_start = System.currentTimeMillis();
+			for (int i = 0; i < m.length; i += 4999) {
+				s1.crypt(m, i, c, i, 3999);
+			}
+			md.update(c);
+			Log.d(TAG, "Time taken to crypt " + m.length + " bytes (Java): " + (System.currentTimeMillis() - time_start) + " ms. Digest: " + Arrays.toString(md.digest()));
+		}
+		
+		{
+			long time_start = System.currentTimeMillis();
+			for (int i = 0; i < m.length; i += 4999) {
+				s2.crypt(m, i, c, i, 3999);
+			}
+			md.update(c);
+			Log.d(TAG, "Time taken to crypt " + m.length + " bytes (Native): " + (System.currentTimeMillis() - time_start) + " ms. Digest: " + Arrays.toString(md.digest()));
+		}
+		
+		{
+			long time_start = System.currentTimeMillis();
+			for (int i = 0; i < m.length; i += 4999) {
+				s3.processBytes(m, i, 3999, c, i);
+			}
+			md.update(c);
+			Log.d(TAG, "Time taken to crypt " + m.length + " bytes (BC): " + (System.currentTimeMillis() - time_start) + " ms. Digest: " + Arrays.toString(md.digest()));
+		}
+	}
+	
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		test1(key1, nonce1, m0);
+		test1(key1, nonce2, m0);
 		
 		test1(key1, nonce1, m1);
 		test1(key1, nonce2, m1);
@@ -271,6 +329,9 @@ public class MainActivity extends Activity {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+		
+		test5(1001, 20);
+		test5(101, 20);
 		
 		Log.d(TAG, "SLEEEPPPPPPPPPPPP");
 		SystemClock.sleep(2000);

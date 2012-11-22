@@ -6,6 +6,7 @@ local.properties
 # Mac
 .DS_Store
 
-# LameLib native
-LameLib/libs/
-LameLib/obj/
+desktop.ini
+thumbs.db
+
+Salsa20/obj/

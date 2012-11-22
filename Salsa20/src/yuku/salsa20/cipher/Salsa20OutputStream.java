@@ -14,7 +14,7 @@ public class Salsa20OutputStream extends OutputStream {
 	
 	public Salsa20OutputStream(OutputStream out, byte[] key, byte[] nonce) {
 		this.out = out;
-		s = new Salsa20(key, nonce);
+		s = new Salsa20.Factory().newInstance(key, nonce, 20);
 		buf = new byte[BUFFER_SIZE];
 		oneByteBuf = new byte[1];
 	}
