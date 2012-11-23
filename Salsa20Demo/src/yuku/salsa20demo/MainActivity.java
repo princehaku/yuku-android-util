@@ -286,7 +286,42 @@ public class MainActivity extends Activity {
 			Log.d(TAG, "Time taken to crypt " + m.length + " bytes (BC): " + (System.currentTimeMillis() - time_start) + " ms. Digest: " + Arrays.toString(md.digest()));
 		}
 	}
-	
+
+	/** compare 3 different implementations for data over 4 GB */
+	void test6(int rounds) {
+		Log.d(TAG, "##################  long-run test  ###################");
+		
+		Salsa20 s1 = new Salsa20.Factory().newInstanceJava(key2, nonce1, rounds);
+		Salsa20 s2 = new Salsa20.Factory().newInstanceNative(key2, nonce1, rounds);
+		Salsa20Engine s3 = new Salsa20Engine();
+		s3.init(true, new ParametersWithIV(new KeyParameter(key2), nonce1));
+		
+		byte[] m = new byte[100000];
+		byte[] c1 = new byte[100000];
+		byte[] c2 = new byte[100000];
+		byte[] c3 = new byte[100000];
+		
+		for (int i = 0; i < m.length; i++) {
+			m[i] = (byte) (0x55);
+		}
+		
+		for (long t = 0; t < 5000000000L; t += m.length) {
+			s1.crypt(m, 0, c1, 0, m.length);
+			s2.crypt(m, 0, c2, 0, m.length);
+			s3.processBytes(m, 0, m.length, c3, 0);
+			
+			int cs = 0;
+			for (int i = 0; i < m.length; i++) {
+				if (c1[i] != c2[i] || c2[i] != c3[i]) {
+					throw new RuntimeException("different result in byte " + (t+i));
+				}
+				cs += c1[i] & 0xff;
+			}
+			
+			Log.d(TAG, "long-run-test done: " + (t + m.length) + " sum=" + cs);
+		}
+	}
+
 	@Override public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
@@ -332,6 +367,8 @@ public class MainActivity extends Activity {
 		
 		test5(1001, 20);
 		test5(101, 20);
+		
+		test6(20);
 		
 		Log.d(TAG, "SLEEEPPPPPPPPPPPP");
 		SystemClock.sleep(2000);
