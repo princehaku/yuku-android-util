@@ -125,6 +125,7 @@ public class BintexReader {
 	
 	public float readFloat() throws IOException {
 		int a = (is_.read() << 24) | (is_.read() << 16) | (is_.read() << 8) | (is_.read());
+		pos_ += 4;
 		return Float.intBitsToFloat(a);
 	}
 
@@ -150,6 +151,7 @@ public class BintexReader {
 			_off += read;
 			_len -= read;
 		}
+		pos_ += total;
 
 		return total;
 	}
