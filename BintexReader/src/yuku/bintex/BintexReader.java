@@ -3,8 +3,6 @@ package yuku.bintex;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 public class BintexReader {
 	private static final int[] SUPPORTED_TYPE_MAP = { // 1 = int; 2 = string; 3 = int[]; 4 = simple map
@@ -378,13 +376,13 @@ public class BintexReader {
 		return res;
 	}
 	
-	public Map<String, Object> readValueSimpleMap() throws IOException {
+	public ValueMap readValueSimpleMap() throws IOException {
 		int t = is_.read();
 		pos_++;
 		return _readValueSimpleMap(t);
 	}
 
-	private Map<String, Object> _readValueSimpleMap(int t) throws IOException {
+	private ValueMap _readValueSimpleMap(int t) throws IOException {
 		if (t != 0x90) {
 			throw new IOException(String.format("value is not simple map: type=%02x", t));
 		}
@@ -392,7 +390,7 @@ public class BintexReader {
 		int size = is_.read();
 		pos_++;
 		
-		LinkedHashMap<String, Object> res = new LinkedHashMap<String, Object>();
+		ValueMap res = new ValueMap();
 		
 		for (int i = 0; i < size; i++) {
 			int key_len = is_.read();

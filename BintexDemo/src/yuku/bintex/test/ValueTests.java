@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
+import yuku.bintex.ValueMap;
 
 public class ValueTests {
 	public static final String TAG = ValueTests.class.getSimpleName();
@@ -197,11 +198,12 @@ public class ValueTests {
 		// empty map
 		br.readValueSimpleMap();
 		
-		Map<String, Object> map2 = br.readValueSimpleMap();
+		ValueMap map2 = br.readValueSimpleMap();
 		assertEquals(0, map2.get(""));
-		assertEquals(1, map2.get("int"));
-		assertEquals("Hello!!", map2.get("string"));
-		assertArrayEquals(new int[] {4,4,899}, (int[]) map2.get("array"));
+		assertEquals(0, map2.getInt(""));
+		assertEquals(1, map2.getInt("int"));
+		assertEquals("Hello!!", map2.getString("string"));
+		assertArrayEquals(new int[] {4,4,899}, map2.getIntArray("array"));
 	}
 	
 	@Test public void testMixedValues() throws Exception {
