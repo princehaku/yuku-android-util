@@ -4,18 +4,21 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.TreeMap;
 
 import org.junit.Test;
 
 import yuku.bintex.BintexReader;
 import yuku.bintex.BintexWriter;
+import yuku.bintex.ValueMap;
 
 public class PositionTests {
 	public static final String TAG = PositionTests.class.getSimpleName();
 
 	byte[] bytes = new byte[100];
 	
-	@Test public void testPosition() throws Exception {
+	@Test public void testPositionForNonValues() throws Exception {
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		BintexWriter bw = new BintexWriter(os);
 		
@@ -129,6 +132,214 @@ public class PositionTests {
 		
 		br.readAutoString();
 		p += 510*2 + 1 + 4;
+		assertEquals(p, br.getPos());
+	}
+
+	@Test public void testPositionForValues() throws Exception {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		BintexWriter bw = new BintexWriter(os);
+		
+		int p = 0;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(0);
+		p += 1;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(-1);
+		p += 1;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(7);
+		p += 1;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(100);
+		p += 2;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(1000);
+		p += 3;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(11222333);
+		p += 4;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueInt(Integer.MIN_VALUE);
+		p += 5;
+		assertEquals(p, bw.getPos());
+		
+		bw.writeValueIntArray(new int[100]);
+		p += 100 + 1 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueIntArray(new int[] {-1, -2, -3});
+		p += 3*4 + 1 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueIntArray(new int[1000]);
+		p += 1000 + 1 + 4;
+		assertEquals(p, bw.getPos()); 
+		
+		int[] a = new int[1000]; 
+		Arrays.fill(a, 1000);
+		bw.writeValueIntArray(a);
+		p += 1000*4 + 1 + 4;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString(null);
+		p += 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString("");
+		p += 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString("hi");
+		p += 2 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString("1234567890123456");
+		p += 16 + 1 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString("\u9999");
+		p += 1*2 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString("\u9999234567890123456");
+		p += 16*2 + 1 + 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueString(new String(new char[1000]));
+		p += 1000 + 1 + 4;
+		assertEquals(p, bw.getPos()); 
+
+		char[] b = new char[1000];
+		Arrays.fill(b, '\u9999');
+		bw.writeValueString(new String(b));
+		p += 1000*2 + 1 + 4;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueSimpleMap(new ValueMap());
+		p += 1;
+		assertEquals(p, bw.getPos()); 
+		
+		bw.writeValueSimpleMap(new TreeMap<String, Object>());
+		p += 1;
+		assertEquals(p, bw.getPos()); 
+		
+		ValueMap c = new ValueMap();
+		c.put("int", 1);
+		c.put("string", "string");
+		c.put("array", new int[100]);
+		c.put("map", new ValueMap());
+		
+		bw.writeValueSimpleMap(c);
+		p += 1 /*header*/ + 1 /* size of map */ 
+		+ 4 /* key "int" */ + 1 /* value */
+		+ 7 /* key "string" */ + 7 /* value */
+		+ 6 /* key "array" */ + 102 /* value */
+		+ 4 /* key "map" */ + 1 /* value */;
+		assertEquals(p, bw.getPos()); 
+		
+		
+		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
+		BintexReader br = new BintexReader(is);
+		p = 0;
+		assertEquals(p, br.getPos()); 
+		
+		br.readValueInt();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 2;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 3;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueInt();
+		p += 5;
+		assertEquals(p, br.getPos());
+		
+		br.readValueIntArray();
+		p += 100 + 1 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueIntArray();
+		p += 3*4 + 1 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueIntArray();
+		p += 1000 + 1 + 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueIntArray();
+		p += 1000*4 + 1 + 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 2 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 16 + 1 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 1*2 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 16*2 + 1 + 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 1000 + 1 + 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueString();
+		p += 1000*2 + 1 + 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueSimpleMap();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueSimpleMap();
+		p += 1;
+		assertEquals(p, br.getPos());
+		
+		br.readValueSimpleMap();
+		p += 1 /*header*/ + 1 /* size of map */ 
+		+ 4 /* key "int" */ + 1 /* value */
+		+ 7 /* key "string" */ + 7 /* value */
+		+ 6 /* key "array" */ + 102 /* value */
+		+ 4 /* key "map" */ + 1 /* value */;
 		assertEquals(p, br.getPos());
 	}
 }
