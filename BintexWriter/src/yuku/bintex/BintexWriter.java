@@ -385,8 +385,9 @@ public class BintexWriter {
 			if (v instanceof String) {
 			} else if (v instanceof Number) {
 			} else if (v instanceof int[]) {
+			} else if (v instanceof Map) {
 			} else {
-				throw new RuntimeException("map entry values must be string or int or int array");
+				throw new RuntimeException("map entry values must be string, or int, or int array, or simple map");
 			}
 			String k = e.getKey();
 			if (k == null || k.length() > 255) {
@@ -417,6 +418,9 @@ public class BintexWriter {
 				writeValueInt(((Number) v).intValue());
 			} else if (v instanceof int[]) {
 				writeValueIntArray((int[]) v);
+			} else if (v instanceof Map) {
+				@SuppressWarnings("unchecked") Map<String, Object> v_map = (Map<String, Object>) v;
+				writeValueSimpleMap(v_map);
 			}
 		}
 	}

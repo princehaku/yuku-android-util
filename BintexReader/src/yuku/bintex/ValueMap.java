@@ -87,8 +87,13 @@ public class ValueMap implements Map<String, Object> {
 	
 	public int[] getIntArray(String key) {
 		Object v = map.get(key);
-		if (v == null) return null;
 		if (v instanceof int[]) return (int[]) v;
+		return null;
+	}
+
+	public ValueMap getSimpleMap(String key) {
+		Object v = map.get(key);
+		if (v instanceof ValueMap) return (ValueMap) v;
 		return null;
 	}
 }

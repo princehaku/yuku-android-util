@@ -183,6 +183,7 @@ public class ValueTests {
 		map.put("int", 1);
 		map.put("string", "Hello!!");
 		map.put("array", new int[] {4,4,899});
+		map.put("map", new LinkedHashMap<String, Object>());
 		bw.writeValueSimpleMap(map);
 		
 		byte[] bytes = os.toByteArray();
@@ -203,6 +204,7 @@ public class ValueTests {
 		assertEquals(0, map2.getInt(""));
 		assertEquals(1, map2.getInt("int"));
 		assertEquals("Hello!!", map2.getString("string"));
+		assertEquals(0, map2.getSimpleMap("map").size());
 		assertArrayEquals(new int[] {4,4,899}, map2.getIntArray("array"));
 	}
 	
