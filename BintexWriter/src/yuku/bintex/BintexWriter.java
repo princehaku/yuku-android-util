@@ -40,7 +40,8 @@ import java.util.Map;
  * 73 A[4] B[A] = 16-bit string with length A
  * 
  * [maps]
- * 90 A {B C[B], value}[A] = simple map with no more than 255 entries with 8-bit string keys
+ * 90 empty map
+ * 91 A {B C[B], value}[A] = simple map (no more than 255 entries with 8-bit string keys and values of type: int/string/int[]/simplemap)
  * (not-yet-implemented) value A {B C[B], value}[A] = same as above with total size of map specified
  * 
  * [arrays]
@@ -368,6 +369,13 @@ public class BintexWriter {
 	
 	public void writeValueSimpleMap(Map<String, Object> map) throws IOException {
 		int size = map.size();
+		
+		if (size == 0) { // empty map
+			os_.write(0x90);
+			pos += 1;
+			return;
+		}
+		
 		if (size > 255) {
 			throw new RuntimeException("entries of map max 255");
 		}
@@ -390,7 +398,7 @@ public class BintexWriter {
 			}
 		}
 		
-		os_.write(0x90);
+		os_.write(0x91);
 		os_.write(size);
 		pos += 2;
 		

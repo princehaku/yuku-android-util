@@ -16,7 +16,7 @@ public class BintexReader {
 		0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 6. 
 		2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 7. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 8. 
-		4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9. 
+		4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // a. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // b. 
 		3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, // c. 
@@ -383,9 +383,15 @@ public class BintexReader {
 	}
 
 	private ValueMap _readValueSimpleMap(int t) throws IOException {
-		if (t != 0x90) {
+		if (t == 0x90) {
+			return new ValueMap();
+		}
+		
+		if (t != 0x91) {
 			throw new IOException(String.format("value is not simple map: type=%02x", t));
 		}
+		
+		// t must be 0x91 by here
 		
 		int size = is_.read();
 		pos_++;
