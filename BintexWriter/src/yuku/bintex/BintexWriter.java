@@ -56,7 +56,7 @@ public class BintexWriter {
 	/** 
 	 * Tambah hanya kalau manggil os_.write(*) Jangan tambah kalo ga.
 	 */
-	private int pos = 0;
+	private int pos_ = 0;
 
 	public BintexWriter(OutputStream os) {
 		this.os_ = os;
@@ -70,7 +70,7 @@ public class BintexWriter {
 		}
 		
 		os_.write(len);
-		pos += 1;
+		pos_ += 1;
 		
 		for (int i = 0; i < s.length(); i++) {
 			char c = s.charAt(i);
@@ -140,14 +140,14 @@ public class BintexWriter {
 		os_.write((a & 0x0000ff00) >> 8);
 		os_.write((a & 0x000000ff));
 		
-		pos += 4;
+		pos_ += 4;
 	}
 	
 	public void writeChar(char c) throws IOException {
 		os_.write((c & 0xff00) >> 8);
 		os_.write(c & 0x00ff);
 		
-		pos += 2;
+		pos_ += 2;
 	}
 	
 	public void writeUint8(int a) throws IOException {
@@ -157,7 +157,7 @@ public class BintexWriter {
 		
 		os_.write(a);
 		
-		pos += 1;
+		pos_ += 1;
 	}
 	
 	public void writeUint16(int a) throws IOException {
@@ -168,7 +168,7 @@ public class BintexWriter {
 		os_.write((a & 0x0000ff00) >> 8);
 		os_.write((a & 0x000000ff) >> 0);
 		
-		pos += 2;
+		pos_ += 2;
 	}
 	
 	public void writeFloat(float f) throws IOException {
@@ -183,7 +183,7 @@ public class BintexWriter {
 	public void writeRaw(byte[] buf, int off, int len) throws IOException {
 		os_.write(buf, off, len);
 		
-		pos += len;
+		pos_ += len;
 	}
 	
 	/** Write a non-negative int using variable length encoding. 
@@ -200,90 +200,90 @@ public class BintexWriter {
 		
 		if (a <= 0x7f) {
 			os_.write(a);
-			pos += 1;
+			pos_ += 1;
 		} else if (a <= 0x3fff) {
 			os_.write(((a & 0x0000ff00) >> 8) | 0x80);
 			os_.write((a & 0x000000ff) >> 0);
-			pos += 2;
+			pos_ += 2;
 		} else if (a <= 0x1fffff) {
 			os_.write(((a & 0x00ff0000) >> 16) | 0xc0);
 			os_.write((a & 0x0000ff00) >> 8);
 			os_.write((a & 0x000000ff));
-			pos += 3;
+			pos_ += 3;
 		} else if (a <= 0x0fffffff) {
 			os_.write(((a & 0xff000000) >> 24) | 0xe0);
 			os_.write((a & 0x00ff0000) >> 16);
 			os_.write((a & 0x0000ff00) >> 8);
 			os_.write((a & 0x000000ff));
-			pos += 4;
+			pos_ += 4;
 		} else {
 			os_.write(0xf0);
 			os_.write((a & 0xff000000) >> 24);
 			os_.write((a & 0x00ff0000) >> 16);
 			os_.write((a & 0x0000ff00) >> 8);
 			os_.write((a & 0x000000ff));
-			pos += 5;
+			pos_ += 5;
 		}
 	}
 	
 	public void writeValueInt(int a) throws IOException {
 		if (a == 0) {
 			os_.write(0x0e);
-			pos += 1;
+			pos_ += 1;
 		} else if (a >= 1 && a <= 7) {
 			os_.write(a);
-			pos += 1;
+			pos_ += 1;
 		} else if (a == -1) {
 			os_.write(0x0f);
-			pos += 1;
+			pos_ += 1;
 		} else if (a > 0) {
 			if (a < 256) { 
 				os_.write(0x10);
 				os_.write(a);
-				pos += 2;
+				pos_ += 2;
 			} else if (a < 65536) {
 				os_.write(0x20);
 				os_.write((a & 0xff00) >> 8);
 				os_.write(a & 0x00ff);
-				pos += 3;
+				pos_ += 3;
 			} else if (a < 16777216) {
 				os_.write(0x30);
 				os_.write((a & 0xff0000) >> 16);
 				os_.write((a & 0x00ff00) >> 8);
 				os_.write(a & 0x0000ff);
-				pos += 4;
+				pos_ += 4;
 			} else {
 				os_.write(0x40);
 				os_.write((a & 0xff000000) >> 24);
 				os_.write((a & 0x00ff0000) >> 16);
 				os_.write((a & 0x0000ff00) >> 8);
 				os_.write((a & 0x000000ff));
-				pos += 5;
+				pos_ += 5;
 			}
 		} else {
 			a = ~a;
 			if (a < 256) { 
 				os_.write(0x11);
 				os_.write(a);
-				pos += 2;
+				pos_ += 2;
 			} else if (a < 65536) {
 				os_.write(0x21);
 				os_.write((a & 0xff00) >> 8);
 				os_.write(a & 0x00ff);
-				pos += 3;
+				pos_ += 3;
 			} else if (a < 16777216) {
 				os_.write(0x31);
 				os_.write((a & 0xff0000) >> 16);
 				os_.write((a & 0x00ff00) >> 8);
 				os_.write(a & 0x0000ff);
-				pos += 4;
+				pos_ += 4;
 			} else {
 				os_.write(0x41);
 				os_.write((a & 0xff000000) >> 24);
 				os_.write((a & 0x00ff0000) >> 16);
 				os_.write((a & 0x0000ff00) >> 8);
 				os_.write((a & 0x000000ff));
-				pos += 5;
+				pos_ += 5;
 			}
 		}
 	}
@@ -292,10 +292,10 @@ public class BintexWriter {
 		// special case: null and length-0 strings
 		if (s == null) {
 			os_.write(0x0c);
-			pos += 1;
+			pos_ += 1;
 		} else if (s.length() == 0) {
 			os_.write(0x0d);
-			pos += 1;
+			pos_ += 1;
 		} else {
 			// check if all characters are 0x0000-0x00ff
 			boolean all8bits = true;
@@ -315,7 +315,7 @@ public class BintexWriter {
 				} else {
 					os_.write(0x60 | len);
 				}
-				pos += 1;
+				pos_ += 1;
 			} else if (len < 256) {
 				if (all8bits) {
 					os_.write(0x70);
@@ -324,14 +324,14 @@ public class BintexWriter {
 					os_.write(0x71);
 					os_.write(len);
 				}
-				pos += 2;
+				pos_ += 2;
 			} else {
 				if (all8bits) {
 					os_.write(0x72);
 				} else {
 					os_.write(0x73);
 				}
-				pos += 1;
+				pos_ += 1;
 				
 				writeInt(len);
 			}
@@ -342,14 +342,14 @@ public class BintexWriter {
 					char c = s.charAt(i);
 					os_.write(c);
 				}
-				pos += len;
+				pos_ += len;
 			} else {
 				for (int i = 0; i < s.length(); i++) {
 					char c = s.charAt(i);
 					os_.write((c & 0xff00) >> 8);
 					os_.write(c & 0x00ff);
 				}
-				pos += len << 1;
+				pos_ += len << 1;
 			}
 		}
 	}
@@ -370,7 +370,7 @@ public class BintexWriter {
 			}
 			os_.write(e);
 		}
-		pos += len;
+		pos_ += len;
 	}
 	
 	/** will use {@link #writeValueUint8Array(int[])} if possible */ 
@@ -404,7 +404,7 @@ public class BintexWriter {
 			os_.write((e & 0x0000ff00) >> 8);
 			os_.write((e & 0x000000ff));
 		}
-		pos += len << 2;
+		pos_ += len << 2;
 	}
 	
 	public void writeValueSimpleMap(Map<String, Object> map) throws IOException {
@@ -412,7 +412,7 @@ public class BintexWriter {
 		
 		if (size == 0) { // empty map
 			os_.write(0x90);
-			pos += 1;
+			pos_ += 1;
 			return;
 		}
 		
@@ -441,16 +441,16 @@ public class BintexWriter {
 		
 		os_.write(0x91);
 		os_.write(size);
-		pos += 2;
+		pos_ += 2;
 		
 		for (Map.Entry<String, Object> e: map.entrySet()) {
 			String k = e.getKey();
 			os_.write(k.length());
-			pos += 1;
+			pos_ += 1;
 			for (int i = 0; i < k.length(); i++) {
 				os_.write(k.charAt(i));
 			}
-			pos += k.length();
+			pos_ += k.length();
 			Object v = e.getValue();
 			if (v instanceof String) {
 				writeValueString((String) v);
@@ -470,7 +470,7 @@ public class BintexWriter {
 	}
 	
 	public int getPos() {
-		return pos;
+		return pos_;
 	}
 
 	public OutputStream getOutputStream() {
