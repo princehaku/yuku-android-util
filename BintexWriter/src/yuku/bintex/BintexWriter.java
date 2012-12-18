@@ -186,6 +186,46 @@ public class BintexWriter {
 		pos += len;
 	}
 	
+	/** Write a non-negative int using variable length encoding. 
+	 * 0-127 is 1 byte: 0xxxxxxx
+	 * 128-16383 (0x3fff) is 2 bytes: 10xxxxxx + 1byte
+	 * 16383-2097151 (0x1fffff) is 3 bytes: 110xxxxx + 2byte
+	 * 2097152-268435455 (0x0fffffff) is 4 bytes: 1110xxxx + 3byte
+	 * 268435456-2147483647 (0x7fffffff) is 5 bytes: 11110000 + 0xxxxxxx + 3byte
+	 **/
+	public void writeVarUint(int a) throws IOException {
+		if (a < 0) {
+			throw new RuntimeException("uint must be non-negative");
+		}
+		
+		if (a <= 0x7f) {
+			os_.write(a);
+			pos += 1;
+		} else if (a <= 0x3fff) {
+			os_.write(((a & 0x0000ff00) >> 8) | 0x80);
+			os_.write((a & 0x000000ff) >> 0);
+			pos += 2;
+		} else if (a <= 0x1fffff) {
+			os_.write(((a & 0x00ff0000) >> 16) | 0xc0);
+			os_.write((a & 0x0000ff00) >> 8);
+			os_.write((a & 0x000000ff));
+			pos += 3;
+		} else if (a <= 0x0fffffff) {
+			os_.write(((a & 0xff000000) >> 24) | 0xe0);
+			os_.write((a & 0x00ff0000) >> 16);
+			os_.write((a & 0x0000ff00) >> 8);
+			os_.write((a & 0x000000ff));
+			pos += 4;
+		} else {
+			os_.write(0xf0);
+			os_.write((a & 0xff000000) >> 24);
+			os_.write((a & 0x00ff0000) >> 16);
+			os_.write((a & 0x0000ff00) >> 8);
+			os_.write((a & 0x000000ff));
+			pos += 5;
+		}
+	}
+	
 	public void writeValueInt(int a) throws IOException {
 		if (a == 0) {
 			os_.write(0x0e);

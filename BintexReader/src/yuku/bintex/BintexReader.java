@@ -177,6 +177,39 @@ public class BintexReader {
 		return total;
 	}
 
+	public int readVarUint() throws IOException {
+		int first = is_.read();
+		if ((first & 0x80) == 0) { // 0xxxxxxx
+			pos_ += 1;
+			return first;
+		} else if ((first & 0xc0) == 0x80) { // 10xxxxxx
+			int next0 = is_.read();
+			pos_ += 2;
+			return ((first & 0x3f) << 8) | (next0);
+		} else if ((first & 0xe0) == 0xc0) { // 110xxxxx
+			int next1 = is_.read();
+			int next0 = is_.read();
+			pos_ += 3;
+			return ((first & 0x1f) << 16) | (next1 << 8) | (next0);
+		} else if ((first & 0xf0) == 0xe0) { // 1110xxxx
+			int next2 = is_.read();
+			int next1 = is_.read();
+			int next0 = is_.read();
+			pos_ += 4;
+			return ((first & 0x0f) << 24) | (next2 << 16) | (next1 << 8) | (next0);
+		} else if (first == 0xf0) { // 11110000
+			int next3 = is_.read();
+			int next2 = is_.read();
+			int next1 = is_.read();
+			int next0 = is_.read();
+			pos_ += 5;
+			return (next3 << 24) | (next2 << 16) | (next1 << 8) | (next0);
+		} else {
+			pos_ += 1;
+			throw new RuntimeException("unknown first byte in varuint: " + first);
+		}
+	}
+	
 	public int readValueInt() throws IOException {
 		int t = is_.read();
 		pos_++;
