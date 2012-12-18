@@ -28,8 +28,18 @@ public class BintexReader {
 	private final InputStream is_;
 	
 	private int pos_ = 0;
-	private byte[] buf_byte = new byte[2048]; 
-	private char[] buf_char = new char[1024]; 
+	
+	private static ThreadLocal<byte[]> buf_byte_ = new ThreadLocal<byte[]>() {
+		@Override protected byte[] initialValue() {
+			return new byte[2048];
+		}
+	};
+	
+	private static ThreadLocal<char[]> buf_char_ = new ThreadLocal<char[]>() {
+		@Override protected char[] initialValue() {
+			return new char[1024];
+		}
+	};
 	
 	public BintexReader(InputStream is) {
 		this.is_ = is;
@@ -46,7 +56,7 @@ public class BintexReader {
 		}
 		
 		// max len = 255, maka buf pasti cukup
-		char[] _buf = this.buf_char;
+		char[] _buf = buf_char_.get();
 		for (int i = 0; i < len; i++) {
 			_buf[i] = readCharWithoutIncreasingPos();
 		}
@@ -61,16 +71,18 @@ public class BintexReader {
 			return ""; //$NON-NLS-1$
 		}
 		
+		char[] buf_char = buf_char_.get();
 		if (len > buf_char.length) {
-			this.buf_char = new char[len + 1024];
+			buf_char = new char[len + 1024];
+			buf_char_.set(buf_char);
 		}
-		char[] _buf = this.buf_char;
+
 		for (int i = 0; i < len; i++) {
-			_buf[i] = readCharWithoutIncreasingPos();
+			buf_char[i] = readCharWithoutIncreasingPos();
 		}
 		pos_ += len + len;
 		
-		return new String(_buf, 0, len);
+		return new String(buf_char, 0, len);
 	}
 	
 	/**
@@ -91,26 +103,26 @@ public class BintexReader {
 			len = readInt();
 		}
 		
+		char[] buf_char = buf_char_.get();
 		if (len > buf_char.length) {
-			this.buf_char = new char[len + 1024];
+			buf_char = new char[len + 1024];
+			buf_char_.set(buf_char);
 		}
 		
 		if (jenis == 0x01 || jenis == 0x11) {
-			char[] _buf = this.buf_char;
 			for (int i = 0; i < len; i++) {
-				_buf[i] = (char) is_.read();
+				buf_char[i] = (char) is_.read();
 			}
 			pos_ += len;
 			
-			return new String(_buf, 0, len);
+			return new String(buf_char, 0, len);
 		} else if (jenis == 0x02 || jenis == 0x12) {
-			char[] _buf = this.buf_char;
 			for (int i = 0; i < len; i++) {
-				_buf[i] = readCharWithoutIncreasingPos();
+				buf_char[i] = readCharWithoutIncreasingPos();
 			}
 			pos_ += len + len;
 			
-			return new String(_buf, 0, len);
+			return new String(buf_char, 0, len);
 		} else {
 			return null;
 		}
@@ -332,7 +344,12 @@ public class BintexReader {
 	}
 
 	private String _read8BitString(int len) throws IOException {
-		byte[] buf1 = len <= this.buf_byte.length? this.buf_byte: new byte[len];
+		byte[] buf1 = buf_byte_.get();
+		if (len > buf1.length) {
+			buf1 = new byte[len + 100];
+			buf_byte_.set(buf1);
+		}
+		
 		is_.read(buf1, 0, len);
 		pos_ += len;
 		return new String(buf1, 0x00, 0, len);
@@ -340,7 +357,12 @@ public class BintexReader {
 	
 	private String _read16BitString(int len) throws IOException {
 		int bytes = len << 1;
-		char[] buf2 = len <= this.buf_char.length? this.buf_char: new char[len];
+		char[] buf2 = buf_char_.get();
+		if (len > buf2.length) {
+			buf2 = new char[len + 100];
+			buf_char_.set(buf2);
+		}
+
 		for (int i = 0; i < len; i++) {
 			buf2[i] = readCharWithoutIncreasingPos();
 		}
@@ -365,7 +387,12 @@ public class BintexReader {
 			throw new IOException(String.format("value is not uint8 array: type=%02x", t));
 		}
 		
-		byte[] buf1 = len <= this.buf_byte.length? this.buf_byte: new byte[len];
+		byte[] buf1 = buf_byte_.get();
+		if (len > buf1.length) {
+			buf1 = new byte[len + 100];
+			buf_byte_.set(buf1);
+		}
+
 		is_.read(buf1, 0, len);
 		pos_ += len;
 		
