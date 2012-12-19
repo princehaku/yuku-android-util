@@ -13,8 +13,12 @@ public class Salsa20InputStream extends InputStream {
 	private final byte[] oneByteBuf;
 	
 	public Salsa20InputStream(InputStream in, byte[] key, byte[] nonce) {
+		this(in, key, nonce, 20);
+	}
+	
+	public Salsa20InputStream(InputStream in, byte[] key, byte[] nonce, int rounds) {
 		this.in = in;
-		s = new Salsa20.Factory().newInstance(key, nonce, 20);
+		s = new Salsa20.Factory().newInstance(key, nonce, rounds);
 		buf = new byte[BUFFER_SIZE];
 		oneByteBuf = new byte[1];
 	}
