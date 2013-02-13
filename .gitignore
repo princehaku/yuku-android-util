@@ -6,7 +6,9 @@ local.properties
 # Mac
 .DS_Store
 
+# Windows
 desktop.ini
 thumbs.db
 
 Salsa20/obj/
+Snappy/obj/
