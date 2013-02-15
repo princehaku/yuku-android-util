@@ -108,11 +108,16 @@ public class CalendarPickerView extends ListView {
 
     // Now iterate between minCal and maxCal and build up our list of months to show.
     monthCounter.setTime(minCal.getTime());
+    final int maxDay = maxCal.get(DAY_OF_MONTH);
     final int maxMonth = maxCal.get(MONTH);
     final int maxYear = maxCal.get(YEAR);
     while ((monthCounter.get(MONTH) <= maxMonth // Up to, including the month.
         || monthCounter.get(YEAR) < maxYear) // Up to the year.
         && monthCounter.get(YEAR) < maxYear + 1) { // But not > next yr.
+    	// special case if the maxDay is 1, since max is exclusive, do not put it as the last month.
+    	if (maxDay == 1 && monthCounter.get(YEAR) == maxYear && monthCounter.get(MONTH) == maxMonth) {
+    		break;
+    	}
       MonthDescriptor month = new MonthDescriptor(monthCounter.get(MONTH), monthCounter.get(YEAR),
           monthNameFormat.format(monthCounter.getTime()));
       cells.add(getMonthCells(month, monthCounter, selectedCal));
