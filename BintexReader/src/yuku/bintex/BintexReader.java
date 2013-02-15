@@ -1,10 +1,11 @@
 package yuku.bintex;
 
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BintexReader {
+public class BintexReader implements Closeable {
 	private static final int[] SUPPORTED_TYPE_MAP = { // 1 = int; 2 = string; 3 = int[]; 4 = simple map
 		//.1 .2 .3 .4 .5 .6 .7 .8 .9 .a .b .c .d .e .f
 		0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 2, 1, 1, // 0. 
@@ -500,7 +501,7 @@ public class BintexReader {
 		return pos_;
 	}
 	
-	public void close() {
+	@Override public void close() {
 		try {
 			is_.close();
 		} catch (IOException e) {

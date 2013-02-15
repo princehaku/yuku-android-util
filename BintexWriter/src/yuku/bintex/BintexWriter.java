@@ -1,5 +1,6 @@
 package yuku.bintex;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
@@ -50,7 +51,7 @@ import java.util.Map;
  * c8 A[4] B[A] = uint8 array
  * cc A[4] B[A*4] = int array
  */
-public class BintexWriter {
+public class BintexWriter implements Closeable {
 	private final OutputStream os_;
 
 	/** 
@@ -465,7 +466,7 @@ public class BintexWriter {
 		}
 	}
 	
-	public void close() throws IOException {
+	@Override public void close() throws IOException {
 		os_.close();
 	}
 	
