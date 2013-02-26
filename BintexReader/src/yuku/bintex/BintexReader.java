@@ -20,7 +20,7 @@ public class BintexReader implements Closeable {
 		4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 9. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // a. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // b. 
-		3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, // c. 
+		3, 3, 0, 0, 3, 0, 0, 0, 3, 3, 0, 0, 3, 0, 0, 0, // c. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // d. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // e. 
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // f. 
@@ -393,7 +393,7 @@ public class BintexReader implements Closeable {
 			buf1 = new byte[len + 100];
 			buf_byte_.set(buf1);
 		}
-
+		
 		is_.read(buf1, 0, len);
 		pos_ += len;
 		
@@ -403,8 +403,36 @@ public class BintexReader implements Closeable {
 		}
 		return res;
 	}
+	
+	public int[] readValueUint16Array() throws IOException {
+		int t = is_.read();
+		pos_++;
+		return _readValueUint16Array(t);
+	}
+	
+	private int[] _readValueUint16Array(int t) throws IOException {
+		int len;
+		if (t == 0xc1) { // len < 256
+			len = is_.read();
+			pos_++;
+		} else if (t == 0xc9) {
+			len = readInt();
+		} else {
+			throw new IOException(String.format("value is not uint16 array: type=%02x", t));
+		}
+		
+		int[] res = new int[len];
+		byte[] buf = new byte[2];
+		for (int i = 0; i < len; i++) {
+			is_.read(buf, 0, 2);
+			res[i] = ((buf[0] & 0xff) << 8) | (buf[1] & 0xff);
+		}
+		pos_ += len + len;
+		
+		return res;
+	}
 
-	/** also returns correctly if the data is of type uint8 array */ 
+	/** also returns correctly if the data is of type uint8 or uint16 array */ 
 	public int[] readValueIntArray() throws IOException {
 		int t = is_.read();
 		pos_++;
@@ -413,10 +441,10 @@ public class BintexReader implements Closeable {
 	
 	private int[] _readValueIntArray(int t) throws IOException {
 		int len;
-		if (t == 0xc0) {
+		if (t == 0xc0 || t == 0xc8) {
 			return _readValueUint8Array(t);
-		} else if (t == 0xc8) {
-			return _readValueUint8Array(t);
+		} else if (t == 0xc1 || t == 0xc9) {
+			return _readValueUint16Array(t);
 		} else if (t == 0xc4) { // len < 256
 			len = is_.read();
 			pos_++;

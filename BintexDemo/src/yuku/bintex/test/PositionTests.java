@@ -185,8 +185,13 @@ public class PositionTests {
 		int[] a = new int[1000]; 
 		Arrays.fill(a, 1000);
 		bw.writeValueIntArray(a);
+		p += 1000*2 + 1 + 4;
+		assertEquals(p, bw.getPos());
+		
+		Arrays.fill(a, 65536);
+		bw.writeValueIntArray(a);
 		p += 1000*4 + 1 + 4;
-		assertEquals(p, bw.getPos()); 
+		assertEquals(p, bw.getPos());
 		
 		bw.writeValueString(null);
 		p += 1;
@@ -288,6 +293,10 @@ public class PositionTests {
 		
 		br.readValueIntArray();
 		p += 1000 + 1 + 4;
+		assertEquals(p, br.getPos());
+		
+		br.readValueIntArray();
+		p += 1000*2 + 1 + 4;
 		assertEquals(p, br.getPos());
 		
 		br.readValueIntArray();

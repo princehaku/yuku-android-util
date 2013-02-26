@@ -47,8 +47,10 @@ import java.util.Map;
  * 
  * [arrays]
  * c0 A B[A] = uint8 array with max 255 elements  
+ * c1 A B[A] = uint16 array with max 255 elements  
  * c4 A B[A*4] = int array with max 255 elements  
  * c8 A[4] B[A] = uint8 array
+ * c9 A[4] B[A] = uint16 array
  * cc A[4] B[A*4] = int array
  */
 public class BintexWriter implements Closeable {
@@ -374,18 +376,49 @@ public class BintexWriter implements Closeable {
 		pos_ += len;
 	}
 	
-	/** will use {@link #writeValueUint8Array(int[])} if possible */ 
+	public void writeValueUint16Array(int[] a) throws IOException {
+		int len = a.length;
+		if (len < 256) {
+			writeUint8(0xc1);
+			writeUint8(len);
+		} else {
+			writeUint8(0xc9);
+			writeInt(len);
+		}
+		
+		for (int e: a) {
+			if (e > 0xffff) {
+				throw new RuntimeException("element is larger than 0xffff");
+			}
+			os_.write((e & 0x0000ff00) >> 8);
+			os_.write((e & 0x000000ff) >> 0);
+		}
+		pos_ += len + len;
+	}
+	
+	/** will use {@link #writeValueUint8Array(int[])} or {@link #writeValueUint16Array(int[])} if possible */ 
 	public void writeValueIntArray(int[] a) throws IOException {
-		{ // check optimization 
+		{ // check for optimization
+			// possible boolean values for (allUint8, allUint16):
+			// true, true -> use write value uint8
+			// false, true -> use write value uint16
+			// false, false -> use this (write value int)
 			boolean allUint8 = true;
+			boolean allUint16 = true;
 			for (int e: a) {
-				if (e > 255 || e < 0) {
+				if (e < 0 || e > 0xffff) {
+					allUint8 = allUint16 = false;
+					break;
+				} else if (e > 255) {
 					allUint8 = false;
 					break;
 				}
 			}
 			if (allUint8) {
 				writeValueUint8Array(a);
+				return;
+			} else if (allUint16) {
+				writeValueUint16Array(a);
 				return;
 			}
 		}

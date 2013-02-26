@@ -139,18 +139,27 @@ public class ValueTests {
 		BintexWriter bw = new BintexWriter(os);
 		
 		int[] smallInts = {0,1,255,80}; 
+		int[] mediumInts1 = {0, 65535};
+		int[] mediumInts2 = {255, 256};
 		int[] bigInts1 = {0,-1}; 
 		int[] bigInts2 = {-1000, Integer.MAX_VALUE, Integer.MIN_VALUE, 0}; 
 		int[] longSmallInts = new int[1000];
+		int[] longMediumInts = new int[1000];
 		int[] longBigInts = new int[1000];
-		Arrays.fill(longBigInts, 256);
+		Arrays.fill(longMediumInts, 256);
+		Arrays.fill(longBigInts, -100800900);
 		
 		bw.writeValueIntArray(smallInts);
 		bw.writeValueUint8Array(smallInts);
 		bw.writeValueUint8Array(smallInts);
+		bw.writeValueUint16Array(mediumInts1);
+		bw.writeValueUint16Array(mediumInts2);
+		bw.writeValueIntArray(mediumInts1);
+		bw.writeValueIntArray(mediumInts2);
 		bw.writeValueIntArray(bigInts1);
 		bw.writeValueIntArray(bigInts2);
 		bw.writeValueIntArray(longSmallInts);
+		bw.writeValueIntArray(longMediumInts);
 		bw.writeValueIntArray(longBigInts);
 		
 		byte[] bytes = os.toByteArray();
@@ -165,9 +174,14 @@ public class ValueTests {
 		assertArrayEquals(smallInts, br.readValueIntArray());
 		assertArrayEquals(smallInts, br.readValueUint8Array());
 		assertArrayEquals(smallInts, br.readValueIntArray());
+		assertArrayEquals(mediumInts1, br.readValueUint16Array());
+		assertArrayEquals(mediumInts2, br.readValueIntArray());
+		assertArrayEquals(mediumInts1, br.readValueUint16Array());
+		assertArrayEquals(mediumInts2, br.readValueIntArray());
 		assertArrayEquals(bigInts1, br.readValueIntArray());
 		assertArrayEquals(bigInts2, br.readValueIntArray());
 		assertArrayEquals(longSmallInts, br.readValueIntArray());
+		assertArrayEquals(longMediumInts, br.readValueIntArray());
 		assertArrayEquals(longBigInts, br.readValueIntArray());
 	}
 	
