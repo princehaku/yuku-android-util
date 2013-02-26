@@ -405,15 +405,21 @@ public class BintexWriter implements Closeable {
 			// false, false -> use this (write value int)
 			boolean allUint8 = true;
 			boolean allUint16 = true;
-			for (int e: a) {
-				if (e < 0 || e > 0xffff) {
-					allUint8 = allUint16 = false;
-					break;
-				} else if (e > 255) {
-					allUint8 = false;
-					break;
+			optimTest: {
+				for (int e: a) {
+					if (e < 0 || e > 0xffff) {
+						allUint8 = allUint16 = false;
+						break optimTest;
+					}
+				}
+				for (int e: a) { // now we know all values are between 0..0xffff
+					if (e > 255) {
+						allUint8 = false;
+						break optimTest;
+					}
 				}
 			}
+			
 			if (allUint8) {
 				writeValueUint8Array(a);
 				return;

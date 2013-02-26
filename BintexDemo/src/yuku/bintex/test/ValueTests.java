@@ -141,7 +141,7 @@ public class ValueTests {
 		int[] smallInts = {0,1,255,80}; 
 		int[] mediumInts1 = {0, 65535};
 		int[] mediumInts2 = {255, 256};
-		int[] bigInts1 = {0,-1}; 
+		int[] bigInts1 = {0, 1, 1000, -1}; 
 		int[] bigInts2 = {-1000, Integer.MAX_VALUE, Integer.MIN_VALUE, 0}; 
 		int[] longSmallInts = new int[1000];
 		int[] longMediumInts = new int[1000];
