@@ -14,7 +14,7 @@ class SnappyImplJava extends Snappy {
 	}
 	
 	@Override public int compress(byte[] in, int inOffset, byte[] out, int outOffset, int len) {
-		Buffer buffer = SnappyCompressor.compress(in, inOffset, len);
+		Buffer buffer = SnappyCompressor.compress(in, inOffset, len, null, 100);
 		if (out.length - outOffset < buffer.getLength()) {
 			throw new IllegalArgumentException("SNAPPY_BUFFER_TOO_SMALL");
 		}
