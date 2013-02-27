@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import yuku.snappy.codec.Snappy;
 
@@ -175,6 +179,7 @@ public class MainActivity extends Activity {
 		}
 		
 		Random r = new Random();
+		r.setSeed(0x92678549abcdef02L);
 		
 		byte[] m = new byte[n];
 		r.nextBytes(m);
@@ -222,6 +227,83 @@ public class MainActivity extends Activity {
 			byte[] digest_too = md.digest();
 			if (!Arrays.equals(digest, digest_too)) throw new RuntimeException("data corrupt on native");
 		}
+		
+		try { // comparison gzip and snappy
+			ByteArrayOutputStream gzip_out = new ByteArrayOutputStream(m.length);
+			ByteArrayInputStream gzip_in;
+			byte[] c = new byte[m.length];
+			int c_len;
+			byte[] m2 = new byte[m.length];
+			Snappy s = new Snappy.Factory().newInstance();
+			for (int i = 0; i < 10; i++) {
+				gzip_out.reset();
+				
+				{ // compress gzip
+					long start = System.currentTimeMillis();
+					GZIPOutputStream g = new GZIPOutputStream(gzip_out);
+					g.write(m, 0, m.length);
+					g.close();
+					long now = System.currentTimeMillis();
+					Log.d(TAG, "gzip    original=" + m.length + " compressed=" + gzip_out.size() + " time=" + (now - start));
+				}
+				
+				{ // compress snappy
+					long start = System.currentTimeMillis();
+					c_len = s.compress(m, 0, c, 0, m.length);
+					long now = System.currentTimeMillis();
+					Log.d(TAG, "snappy  original=" + m.length + " compressed=" + c_len + " time=" + (now - start));
+				}
+				
+				gzip_in = new ByteArrayInputStream(gzip_out.toByteArray());
+				
+				{ // uncompress gzip
+					long start = System.currentTimeMillis();
+					GZIPInputStream g = new GZIPInputStream(gzip_in);
+					int m2_len = 0;
+					while (m2_len < m.length) {
+						int read = g.read(m2, m2_len, m2.length - m2_len);
+						if (read < 0) break;
+						m2_len += read;
+					}
+					g.close();
+					long now = System.currentTimeMillis();
+					Log.d(TAG, "ungzip    original=" + gzip_out.size() + " uncompressed=" + m2_len + " time=" + (now - start));
+				}
+				
+				{ // uncompress snappy
+					long start = System.currentTimeMillis();
+					int m2_len = s.decompress(c, 0, m2, 0, c_len);
+					long now = System.currentTimeMillis();
+					Log.d(TAG, "unsnappy  original=" + c_len + " uncompressed=" + m2_len + " time=" + (now - start));
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void test8() { // mis-alignment test
+		for (int sft = 0; sft < 8; sft++) {
+			Snappy s = new Snappy.Factory().newInstance();
+			byte[] m1 = "987979876876qwertyuiopasdfghjklzxcvbnm,..;'/[]=-QWERTYUIOPLKJHGFDSAZXCVBNM<>?}}7654uytr7654uytr7564uytriuyiuyiuy876876876".getBytes();
+	
+			int c_max = s.maxCompressedLength(m1.length - sft);
+			byte[] c = new byte[c_max + 24];
+			int c_len = s.compress(m1, sft, c, sft * 3, m1.length - sft);
+			Log.d(TAG, "- Uncompressed size: " + (m1.length - sft));
+			Log.d(TAG, "- Compressed size: " + c_len);
+			
+			int m2_max = s.uncompressedLength(c, sft * 3, c_len);
+			byte[] m2 = new byte[m2_max + 8];
+			int m2_len = s.decompress(c, sft * 3, m2, sft, c_len);
+			Log.d(TAG, "- Uncompressed real size: " + m2_len);
+			
+			for (int i = 0; i < m2_len; i++) {
+				if (m1[i + sft] != m2[i + sft]) {
+					throw new RuntimeException("m1 and m2 differs at offset " + i);
+				}
+			}
+		}
 	}
 	
 	@Override public void onCreate(Bundle savedInstanceState) {
@@ -243,5 +325,7 @@ public class MainActivity extends Activity {
 		test7(100000);
 		test7(10000);
 		test7(1000);
+		
+		test8();
 	}
 }
