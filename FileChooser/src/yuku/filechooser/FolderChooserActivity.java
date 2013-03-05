@@ -13,7 +13,6 @@ import android.text.Editable;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
 import android.text.style.StyleSpan;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -199,7 +198,7 @@ public class FolderChooserActivity extends Activity {
 		}
 
 		@Override public View getView(int position, View convertView, ViewGroup parent, int level, TreeNodeIconType iconType, int[] lines) {
-			TextView res = (TextView) (convertView != null? convertView: LayoutInflater.from(getApplicationContext()).inflate(android.R.layout.simple_list_item_1, null));
+			TextView res = (TextView) (convertView != null? convertView: getLayoutInflater().inflate(android.R.layout.simple_list_item_1, parent, false));
 			
 			res.setPadding((int) ((getResources().getDisplayMetrics().density) * (20 * (level - 1) + 6)), 0, 0, 0);
 			res.setText(label != null? label: file.getName());
