@@ -26,7 +26,7 @@ public class BintexReader implements Closeable {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // f. 
 	};
 	
-	private final InputStream is_;
+	private InputStream is_;
 	
 	private int pos_ = 0;
 	
@@ -44,6 +44,17 @@ public class BintexReader implements Closeable {
 	
 	public BintexReader(InputStream is) {
 		this.is_ = is;
+	}
+	
+	/**
+	 * Acts as if you were instantiating this object, only without memory allocations.
+	 * Make sure that you have done with the current object before reusing this object.
+	 * @return this object so that you can use ternary operator
+	 */
+	public BintexReader reuse(InputStream is) {
+		this.is_ = is;
+		this.pos_ = 0;
+		return this;
 	}
 	
 	public String readShortString() throws IOException {

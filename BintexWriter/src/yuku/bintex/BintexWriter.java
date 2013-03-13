@@ -54,15 +54,23 @@ import java.util.Map;
  * cc A[4] B[A*4] = int array
  */
 public class BintexWriter implements Closeable {
-	private final OutputStream os_;
+	private OutputStream os_;
 
-	/** 
-	 * Tambah hanya kalau manggil os_.write(*) Jangan tambah kalo ga.
-	 */
 	private int pos_ = 0;
 
 	public BintexWriter(OutputStream os) {
 		this.os_ = os;
+	}
+	
+	/**
+	 * Acts as if you were instantiating this object, only without memory allocations.
+	 * Make sure that you have done with the current object before reusing this object.
+	 * @return this object so that you can use ternary operator
+	 */
+	public BintexWriter reuse(OutputStream os) {
+		this.os_ = os;
+		this.pos_ = 0;
+		return this;
 	}
 	
 	public void writeShortString(String s) throws IOException {
