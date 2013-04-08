@@ -23,6 +23,22 @@ public abstract class EasyAdapter extends BaseAdapter {
 		return convertView;
 	}
 	
+	@Override public View getDropDownView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			convertView = newDropDownView(position, parent);
+		}
+		bindDropDownView(convertView, position, parent);
+		return convertView;
+	}
+	
+	public View newDropDownView(int position, ViewGroup parent) {
+		return newView(position, parent);
+	}
+	
+	public void bindDropDownView(View view, int position, ViewGroup parent) {
+		bindView(view, position, parent);
+	}
+	
 	public abstract View newView(int position, ViewGroup parent);
 	public abstract void bindView(View view, int position, ViewGroup parent);
 }
