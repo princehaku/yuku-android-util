@@ -1,7 +1,9 @@
 package yuku.afw.storage;
 
+import android.annotation.TargetApi;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -169,12 +171,16 @@ public class Preferences {
 		Log.d(TAG, key + " removed"); //$NON-NLS-1$
 	}
 	
-	private synchronized static void commitIfNotHeld() {
+	@TargetApi(9) private synchronized static void commitIfNotHeld() {
 		if (held > 0) {
 			// don't do anything now
 		} else {
 			if (currentEditor != null) {
-				currentEditor.commit();
+				if (Build.VERSION.SDK_INT >= 9) {
+					currentEditor.apply();
+				} else {
+					currentEditor.commit();
+				}
 				currentEditor = null;
 			}
 		}
