@@ -18,8 +18,12 @@ package yuku.androidsdk.com.android.internal.view.menu;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.view.ActionProvider;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.*;
+import android.view.MenuItem;
+import android.view.SubMenu;
+import android.view.View;
+import android.view.ViewDebug;
 
 /**
  * @hide
@@ -56,7 +60,7 @@ public final class MenuItemImpl implements MenuItem {
 	private static final int HIDDEN = 0x00000008;
 	private static final int ENABLED = 0x00000010;
 
-	/** Used for the icon resource ID if this item does not have an icon */
+    /** Used for the icon resource ID if this item does not have an icon */
 	static final int NO_ICON = 0;
 
 	/**
@@ -400,4 +404,47 @@ public final class MenuItemImpl implements MenuItem {
 	//at yuku.androidsdk.com.android.internal.view.menu.MenuItemImpl.setShortcutLabel(MenuItemImpl.java)
 	// so, dummy implementation:
 	public void setShortcutLabel(String whatever) {}
+
+	@Override public boolean collapseActionView() {
+        return false;
+	}
+
+	@Override public boolean expandActionView() {
+		return false;
+	}
+
+	@Override public ActionProvider getActionProvider() {
+		return null;
+	}
+
+	@Override public View getActionView() {
+		return null;
+	}
+
+	@Override public boolean isActionViewExpanded() {
+		return false;
+	}
+
+	@Override public MenuItem setActionProvider(ActionProvider actionProvider) {
+		return null;
+	}
+
+	@Override public MenuItem setActionView(View view) {
+		return null;
+	}
+
+	@Override public MenuItem setActionView(int resId) {
+		return null;
+	}
+
+	@Override public MenuItem setOnActionExpandListener(OnActionExpandListener listener) {
+		return null;
+	}
+
+	@Override public void setShowAsAction(int actionEnum) {
+	}
+
+	@Override public MenuItem setShowAsActionFlags(int actionEnum) {
+		return null;
+	}
 }
