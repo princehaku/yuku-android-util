@@ -21,14 +21,14 @@
 
 package gnu.trove.stack.array;
 
-import gnu.trove.stack.TIntStack;
+import gnu.trove.impl.Constants;
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.impl.*;
+import gnu.trove.stack.TIntStack;
 
 import java.io.Externalizable;
+import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.IOException;
 
 
 //////////////////////////////////////////////////

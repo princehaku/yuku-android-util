@@ -21,8 +21,6 @@ package gnu.trove.queue;
 
 import gnu.trove.TIntCollection;
 
-import java.io.Serializable;
-
 /**
  * Interface for Trove queue implementations.
  *

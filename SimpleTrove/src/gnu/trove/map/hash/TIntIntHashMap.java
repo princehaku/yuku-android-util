@@ -25,18 +25,27 @@ package gnu.trove.map.hash;
 // THIS IS A GENERATED CLASS. DO NOT HAND EDIT! //
 //////////////////////////////////////////////////
 
-import gnu.trove.map.TIntIntMap;
+import gnu.trove.TIntCollection;
 import gnu.trove.function.TIntFunction;
-import gnu.trove.procedure.*;
-import gnu.trove.set.*;
-import gnu.trove.iterator.*;
-import gnu.trove.iterator.hash.*;
-import gnu.trove.impl.hash.*;
 import gnu.trove.impl.HashFunctions;
-import gnu.trove.*;
+import gnu.trove.impl.hash.THashPrimitiveIterator;
+import gnu.trove.impl.hash.TIntIntHash;
+import gnu.trove.impl.hash.TPrimitiveHash;
+import gnu.trove.iterator.TIntIntIterator;
+import gnu.trove.iterator.TIntIterator;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.procedure.TIntIntProcedure;
+import gnu.trove.procedure.TIntProcedure;
+import gnu.trove.set.TIntSet;
 
-import java.io.*;
-import java.util.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.Map;
 
 /**
  * An open addressed Map implementation for int keys and int values.

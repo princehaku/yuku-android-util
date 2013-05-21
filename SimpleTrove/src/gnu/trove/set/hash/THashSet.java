@@ -20,18 +20,21 @@
 
 package gnu.trove.set.hash;
 
-import gnu.trove.impl.hash.TObjectHash;
 import gnu.trove.impl.HashFunctions;
+import gnu.trove.impl.hash.TObjectHash;
+import gnu.trove.iterator.hash.TObjectHashIterator;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.procedure.array.ToObjectArrayProceedure;
-import gnu.trove.iterator.hash.TObjectHashIterator;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Arrays;
-import java.lang.reflect.Array;
 
 
 /**

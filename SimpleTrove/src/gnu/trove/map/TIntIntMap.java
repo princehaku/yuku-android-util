@@ -23,14 +23,14 @@ package gnu.trove.map;
 // THIS IS A GENERATED CLASS. DO NOT HAND EDIT! //
 //////////////////////////////////////////////////
 
-import gnu.trove.function.*;
-import gnu.trove.iterator.*;
-import gnu.trove.procedure.*;
-import gnu.trove.set.*;
 import gnu.trove.TIntCollection;
+import gnu.trove.function.TIntFunction;
+import gnu.trove.iterator.TIntIntIterator;
+import gnu.trove.procedure.TIntIntProcedure;
+import gnu.trove.procedure.TIntProcedure;
+import gnu.trove.set.TIntSet;
 
 import java.util.Map;
-import java.io.Serializable;
 
 
 /**

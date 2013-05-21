@@ -22,10 +22,10 @@ package gnu.trove.map;
 
 import gnu.trove.TIntCollection;
 import gnu.trove.function.TIntFunction;
-import gnu.trove.procedure.TObjectProcedure;
+import gnu.trove.iterator.TObjectIntIterator;
 import gnu.trove.procedure.TIntProcedure;
 import gnu.trove.procedure.TObjectIntProcedure;
-import gnu.trove.iterator.TObjectIntIterator;
+import gnu.trove.procedure.TObjectProcedure;
 
 import java.util.Map;
 import java.util.Set;

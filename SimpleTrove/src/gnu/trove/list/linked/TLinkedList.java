@@ -24,11 +24,14 @@ package gnu.trove.list.linked;
 import gnu.trove.list.TLinkable;
 import gnu.trove.procedure.TObjectProcedure;
 
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.lang.reflect.Array;
 import java.util.AbstractSequentialList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.lang.reflect.Array;
 
 
 
