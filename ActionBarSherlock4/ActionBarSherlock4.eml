@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component jdk="Android 4.0 Platform" jdk_type="Android SDK">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="android-support-v4" scope="PROVIDED"/>
+	<levels>
+		<level name="android-support-v4" value="project"/>
+	</levels>
+</component>
